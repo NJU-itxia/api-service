@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import site.itxia.apiservice.data.repository.MemberRepository;
 import site.itxia.apiservice.dto.MemberDTO;
-import site.itxia.apiservice.dto.MemberMapper;
+import site.itxia.apiservice.mapper.MemberMapper;
 import site.itxia.apiservice.dto.ResultWrapper;
 import site.itxia.apiservice.util.PasswordUtil;
 import site.itxia.apiservice.vo.MemberAddVo;
