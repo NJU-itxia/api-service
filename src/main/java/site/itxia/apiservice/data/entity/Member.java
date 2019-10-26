@@ -1,27 +1,26 @@
 package site.itxia.apiservice.data.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonFilter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import javax.persistence.*;
 
 @Entity
-@Getter
+@Data
 public class Member {
-
-    public Member(){
-
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String real_name;
+    @Column(name = "real_name")
+    private String realName;
 
-    private String login_name;
+    @Column(name = "login_name")
+    private String loginName;
 
-    @JsonIgnore
+    @JsonFilter("")
     private String password;
 
     private int role;
