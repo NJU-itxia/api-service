@@ -20,7 +20,6 @@ public class Member {
     @Column(name = "login_name")
     private String loginName;
 
-    @JsonFilter("")
     private String password;
 
     private int role;
