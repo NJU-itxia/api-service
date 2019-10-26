@@ -20,7 +20,7 @@ plugins {
     id 'org.springframework.boot' version '2.2.0.RELEASE'
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
     id 'java'
-    id 'net.ltgt.apt' version '0.8'
+    id 'net.ltgt.apt' version '0.20'
 }
 
 group = 'site.itxia'
@@ -41,15 +41,24 @@ repositories {
     mavenCentral()
 }
 
+//idea插件
+apply plugin: 'net.ltgt.apt-idea'
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
     //implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'mysql:mysql-connector-java'
-    compile 'commons-codec:commons-codec:1.13'
-    compile 'org.mapstruct:mapstruct:1.3.1.Final'
-    apt 'org.mapstruct:mapstruct-processor:1.3.1.Final'
+
+    //apache工具库
+    implementation 'commons-codec:commons-codec:1.13'
+
+    //mapstruct用于映射vo, po, dto
+    implementation 'org.mapstruct:mapstruct:1.3.1.Final'
+    testImplementation "org.testng:testng:6.10", "org.easytesting:fest-assert:1.4"
+    annotationProcessor "org.mapstruct:mapstruct-processor:1.3.1.Final"
+
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
