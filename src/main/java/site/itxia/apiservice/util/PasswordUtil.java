@@ -1,10 +1,15 @@
 package site.itxia.apiservice.util;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 public class PasswordUtil {
 
+    static Log log = LogFactory.getLog(PasswordUtil.class);
+
+    //TODO 配置读取失败
     @Value("${itxia.password.salt}")
     private static String salt;
 
@@ -17,6 +22,7 @@ public class PasswordUtil {
     public static String encrypt(String originPassword) {
         if (salt == null) {
             salt = "";
+            log.warn("加密密码盐为null.");
         }
         var temp = DigestUtils.sha256Hex(originPassword.concat(salt));
         return DigestUtils.sha256Hex(temp);
