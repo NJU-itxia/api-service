@@ -3,6 +3,7 @@ package site.itxia.apiservice.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import site.itxia.apiservice.dto.MemberDTO;
+import site.itxia.apiservice.dto.ResultWrapper;
 import site.itxia.apiservice.service.MemberService;
 import site.itxia.apiservice.vo.MemberAddVo;
 
@@ -26,7 +27,7 @@ public class MemberController {
     }
 
     @PostMapping("")
-    public MemberDTO add(@Valid @RequestBody MemberAddVo memberAddVo){
+    public ResultWrapper<MemberDTO> add(@Valid @RequestBody MemberAddVo memberAddVo){
         return memberService.addNewMember(memberAddVo);
     }
 

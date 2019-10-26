@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import site.itxia.apiservice.data.repository.MemberRepository;
 import site.itxia.apiservice.dto.MemberDTO;
 import site.itxia.apiservice.dto.MemberMapper;
+import site.itxia.apiservice.dto.ResultWrapper;
+import site.itxia.apiservice.util.PasswordUtil;
 import site.itxia.apiservice.vo.MemberAddVo;
 
 import java.util.ArrayList;
@@ -28,10 +30,10 @@ public class MemberService {
         return memberDTOList;
     }
 
-    public MemberDTO addNewMember(MemberAddVo memberAddVo){
+    public ResultWrapper<MemberDTO> addNewMember(MemberAddVo memberAddVo){
         var po = MemberMapper.MAPPER.voToPo(memberAddVo);
+        po.setPassword(PasswordUtil.encrypt(po.getPassword())); //加密密码
         var result = memberRepository.save(po);
-        return MemberMapper.MAPPER.memberToMemberDTO(result);
-        //var member = new Member(0,realName,loginName,password,role,status);
+        return new ResultWrapper<>(MemberMapper.MAPPER.memberToMemberDTO(result));
     }
 }
