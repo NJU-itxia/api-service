@@ -1,6 +1,7 @@
 package site.itxia.apiservice;
 
 import org.junit.Before;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,7 +27,7 @@ public class ApiServiceTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
-    @org.junit.Test
+    @Test
     public void contextLoads() throws Exception {
     }
 
