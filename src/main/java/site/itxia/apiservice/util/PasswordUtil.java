@@ -4,14 +4,28 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+/**
+ * 密码加密/解密工具类.
+ * */
+@Component
 public class PasswordUtil {
 
-    static Log log = LogFactory.getLog(PasswordUtil.class);
+    private static Log log = LogFactory.getLog(PasswordUtil.class);
 
-    //TODO 配置读取失败
+    /**
+     * 加密盐
+     * */
+    private static String salt = null;
+
+    /**
+     * 用于从配置文件注入盐值.
+     */
     @Value("${itxia.password.salt}")
-    private static String salt;
+    private void setSalt(String newSalt) {
+        salt = newSalt;
+    }
 
     /**
      * 加密原始密码.
