@@ -1,26 +1,19 @@
-/*
-plugins {
-    id 'java'
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.1.6.RELEASE")
+        //asciidoc用于生成API文档，暂时用不到
+        //classpath("org.asciidoctor:asciidoctor-gradle-plugin:1.5.3")
+    }
 }
 
-group 'site.itxia'
-version '1.0-SNAPSHOT'
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-}
-*/
 plugins {
     id 'org.springframework.boot' version '2.2.0.RELEASE'
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
     id 'java'
-    id 'net.ltgt.apt' version '0.20'
 }
 
 group = 'site.itxia'
@@ -42,13 +35,15 @@ repositories {
     mavenCentral()
 }
 
-//idea插件
-apply plugin: 'net.ltgt.apt-idea'
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
-    //implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'mysql:mysql-connector-java'
 
@@ -57,18 +52,32 @@ dependencies {
 
     //mapstruct用于映射vo, po, dto
     implementation 'org.mapstruct:mapstruct:1.3.1.Final'
-    testImplementation "org.testng:testng:6.10", "org.easytesting:fest-assert:1.4"
     annotationProcessor "org.mapstruct:mapstruct-processor:1.3.1.Final"
 
+    //测试库，暂时用不到
+    //testImplementation "org.testng:testng:6.10", "org.easytesting:fest-assert:1.4"
+
+
     compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+/*
+    排除了junit5的官方test包
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
-    testImplementation 'junit:junit'
-    testImplementation 'org.springframework.security:spring-security-test'
+     */
+
+    //官方test包里已经包含有junit
+    //testImplementation 'junit:junit'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    //暂时用不到restdoc
+    //testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 }
 
 test {
