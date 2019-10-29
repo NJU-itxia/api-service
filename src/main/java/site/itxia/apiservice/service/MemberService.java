@@ -15,22 +15,18 @@ import java.util.List;
 @Service
 public class MemberService {
 
+    @Autowired
     private MemberRepository memberRepository;
 
-    @Autowired
-    public MemberService(MemberRepository memberRepository){
-        this.memberRepository = memberRepository;
-    }
-
-    public List<MemberDTO> getAllMember(){
+    public List<MemberDTO> getAllMember() {
         var memberDTOList = new ArrayList<MemberDTO>();
-        for(var member : memberRepository.findAll()){
+        for (var member : memberRepository.findAll()) {
             memberDTOList.add(MemberMapper.MAPPER.memberToMemberDTO(member));
         }
         return memberDTOList;
     }
 
-    public ResultWrapper<MemberDTO> addNewMember(MemberAddVo memberAddVo){
+    public ResultWrapper<MemberDTO> addNewMember(MemberAddVo memberAddVo) {
         var po = MemberMapper.MAPPER.voToPo(memberAddVo);
         po.setPassword(PasswordUtil.encrypt(po.getPassword())); //加密密码
         var result = memberRepository.save(po);

@@ -14,12 +14,8 @@ import java.util.List;
 @RequestMapping("/member")
 public class MemberController {
 
-    private MemberService memberService;
-
     @Autowired
-    public MemberController(MemberService memberService){
-        this.memberService = memberService;
-    }
+    private MemberService memberService;
 
     @GetMapping("")
     public List<MemberDTO> getAll(){
