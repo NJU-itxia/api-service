@@ -29,6 +29,14 @@ public class ResultWrapper<T> {
         this(0, payload);
     }
 
+    public static <S> ResultWrapper wrapSuccess(S payload) {
+        return new ResultWrapper<S>(payload);
+    }
+
+    public static <S> ResultWrapper wrapFail(int errCode, S payload) {
+        return new ResultWrapper<S>(errCode, payload);
+    }
+
     /**
      * 根据自定义错误码，返回对应的错误信息.
      * 错误信息详见API文档.
