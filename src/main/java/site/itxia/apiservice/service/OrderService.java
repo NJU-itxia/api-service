@@ -10,6 +10,7 @@ import site.itxia.apiservice.data.repository.OrderHistoryRepository;
 import site.itxia.apiservice.data.repository.OrderRepository;
 import site.itxia.apiservice.dto.OrderDTO;
 import site.itxia.apiservice.dto.OrderHistoryDTO;
+import site.itxia.apiservice.enumable.OrderStatus;
 import site.itxia.apiservice.mapper.OrderHistoryMapper;
 import site.itxia.apiservice.mapper.OrderMapper;
 import site.itxia.apiservice.util.DateUtil;
@@ -46,6 +47,7 @@ public class OrderService {
         var order = orderMapper.requestOrderVoToOrder(requestOrderVo);
         //设置为当前时间
         order.setTime(DateUtil.getCurrentUnixTime());
+        order.setStatus(OrderStatus.CREATED);
         var savedOrder = orderRepository.save(order);
         var dto = orderMapper.orderToOrderDTO(savedOrder);
         return dto;
@@ -95,27 +97,27 @@ public class OrderService {
      * TODO 使用枚举代替硬编码数字
      */
     private Order updateOrderStatus(int orderID, int action) {
-        int newState = -1;
+        OrderStatus newState;
         var order = orderRepository.findById(orderID).get();
         //憨批java语法
         switch (action) {
             case 0:
-                newState = 1;
+                newState = OrderStatus.ACCEPTED;
                 break;
             case 1:
-                newState = 0;
+                newState = OrderStatus.CREATED;
                 break;
             case 2:
-                newState = 2;
+                newState = OrderStatus.COMPLETED;
                 break;
             case 3:
-                newState = 3;
+                newState = OrderStatus.CANCELED;
                 break;
             case 4:
-                newState = 4;
+                newState = OrderStatus.ABANDONED;
                 break;
             default:
-                newState = -1;
+                newState = OrderStatus.CREATED;
         }
         order.setStatus(newState);
         return orderRepository.save(order);

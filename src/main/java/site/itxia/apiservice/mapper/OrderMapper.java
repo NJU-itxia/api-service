@@ -21,5 +21,6 @@ public interface OrderMapper {
     public Order requestOrderVoToOrder(RequestOrderVo requestOrderVo);
 
 
+    @Mapping(source = "status.status", target = "status")
     public OrderDTO orderToOrderDTO(Order order);
 }

@@ -40,7 +40,8 @@ public class Order {
     private String description;
 
     @Column(nullable = false, columnDefinition = "bit(3) default 0")
-    private int status;
+    @Enumerated(value = EnumType.ORDINAL)
+    private OrderStatus status;
 
     @Column(columnDefinition = "text")
     private String summary;
