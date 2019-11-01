@@ -12,7 +12,7 @@ public enum MemberStatus {
      * 启用(正常).
      */
     ENABLE(1);
-    private int status;
+    private final int status;
 
     MemberStatus(int status) {
         this.status = status;

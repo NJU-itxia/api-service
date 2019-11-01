@@ -9,8 +9,8 @@ public enum Campus {
     GU_LOU(2, "鼓楼"),
     ;
 
-    private int location;
-    private String locationName;
+    private final int location;
+    private final String locationName;
 
     private Campus(int location, String locationName) {
         this.location = location;

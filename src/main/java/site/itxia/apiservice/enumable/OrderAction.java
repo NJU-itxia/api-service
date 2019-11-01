@@ -26,7 +26,7 @@ public enum OrderAction {
      */
     ABANDON(4);
 
-    private int action;
+    private final int action;
 
     private OrderAction(int action) {
         this.action = action;

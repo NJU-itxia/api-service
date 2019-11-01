@@ -18,7 +18,7 @@ public enum MemberRole {
      */
     ADMIN(2);
 
-    private int role;
+    private final int role;
 
     private MemberRole(int role) {
         this.role = role;
