@@ -4,7 +4,7 @@ package site.itxia.apiservice.enumable;
  * 成员角色.
  * 用于权限控制.
  */
-public enum Role {
+public enum MemberRole {
     /**
      * 游客，无权限.
      */
@@ -20,7 +20,7 @@ public enum Role {
 
     private int role;
 
-    private Role(int role) {
+    private MemberRole(int role) {
         this.role = role;
     }
 

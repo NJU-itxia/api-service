@@ -4,7 +4,7 @@ package site.itxia.apiservice.enumable;
  * 保修期信息.
  * 用于在order中记录.
  * */
-public enum Warranty {
+public enum OrderWarranty {
     /**
      * 不确定.
      * */
@@ -19,7 +19,7 @@ public enum Warranty {
     EXPIRED(2);
     private final int warranty;
 
-    private Warranty(int warranty) {
+    private OrderWarranty(int warranty) {
         this.warranty = warranty;
     }
 
