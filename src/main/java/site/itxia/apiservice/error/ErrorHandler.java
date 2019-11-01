@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import site.itxia.apiservice.dto.ResultWrapper;
+import site.itxia.apiservice.enumable.ErrorCode;
 
 /**
  * @author zhenxi
@@ -23,8 +24,7 @@ public class ErrorHandler {
     @ResponseBody
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ResultWrapper methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
-        var result = ResultWrapper.wrap(20, e.getBindingResult().getFieldError().getDefaultMessage());
-        return result;
+        return ResultWrapper.wrap(ErrorCode.INVALID_ARGUMENTS, e.getBindingResult().getFieldError().getDefaultMessage());
     }
 
     /**
@@ -34,6 +34,6 @@ public class ErrorHandler {
     @ResponseBody
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ResultWrapper httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException e) {
-        return ResultWrapper.wrap(20, e.getMessage());
+        return ResultWrapper.wrap(ErrorCode.JSON_PARSE_ERROR, e.getMessage());
     }
 }

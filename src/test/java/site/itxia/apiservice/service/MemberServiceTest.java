@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MimeTypeUtils;
+import site.itxia.apiservice.enumable.ErrorCode;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -59,7 +60,7 @@ class MemberServiceTest {
                 .contentType(MimeTypeUtils.APPLICATION_JSON_VALUE)
         )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.errCode", Matchers.is(0)))
+                .andExpect(jsonPath("$.errorCode", Matchers.is(ErrorCode.SUCCESS.getErrCode())))
                 .andExpect(jsonPath("$.payload.id", Matchers.greaterThan(0)))
         ;
     }
