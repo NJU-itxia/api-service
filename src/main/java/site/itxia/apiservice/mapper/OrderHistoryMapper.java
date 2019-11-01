@@ -18,7 +18,11 @@ public interface OrderHistoryMapper {
 
     public static OrderHistoryMapper INSTANCE = Mappers.getMapper(OrderHistoryMapper.class);
 
+    @Mapping(target = "memberName", ignore = true)
     public OrderHistoryDTO toDTO(OrderHistory orderHistory);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "memberID", ignore = true)
+    @Mapping(target = "time", ignore = true)
     public OrderHistory handleToOrderHistory(HandleOrderVo handleOrderVo);
 }
