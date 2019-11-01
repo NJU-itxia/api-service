@@ -23,7 +23,7 @@ public class MemberController {
     }
 
     @PostMapping("")
-    public ResultWrapper<MemberDTO> add(@Valid @RequestBody MemberAddVo memberAddVo){
+    public ResultWrapper add(@Valid @RequestBody MemberAddVo memberAddVo){
         return memberService.addNewMember(memberAddVo);
     }
 

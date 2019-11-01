@@ -14,28 +14,47 @@ public class ResultWrapper<T> {
     private T payload;
 
     /**
-     * 包装失败的请求，自动根据错误码生成错误信息.
+     * 包装返回payload.
+     * 自动根据错误码添加上错误信息.
      */
-    public ResultWrapper(int errCode, T payload) {
+    private ResultWrapper(int errCode, T payload) {
         this.errCode = errCode;
         this.errMessage = errCodeToMessage(errCode);
         this.payload = payload;
     }
 
     /**
-     * 包装成功的请求，自动添加错误码 0 .
+     * 包装成功的返回值.
+     * 返回代码默认为0.
+     *
+     * @param payload 响应中的payload.
+     * @return 响应body.
      */
-    public ResultWrapper(T payload) {
-        this(0, payload);
-    }
-
     public static <S> ResultWrapper wrapSuccess(S payload) {
-        return new ResultWrapper<S>(payload);
+        return new ResultWrapper<S>(0, payload);
     }
 
-    public static <S> ResultWrapper wrapFail(int errCode, S payload) {
+    /**
+     * 包装返回代码和返回值.
+     *
+     * @param errCode 错误码.
+     * @param payload 响应中的payload.
+     * @return 响应body.
+     */
+    public static <S> ResultWrapper wrap(int errCode, S payload) {
         return new ResultWrapper<S>(errCode, payload);
     }
+
+    /**
+     * 仅包装返回代码.
+     *
+     * @param errCode 错误码.
+     * @return 响应body.
+     */
+    public static <S> ResultWrapper wrap(int errCode) {
+        return new ResultWrapper<S>(errCode, null);
+    }
+
 
     /**
      * 根据自定义错误码，返回对应的错误信息.

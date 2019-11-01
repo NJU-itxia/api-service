@@ -22,8 +22,8 @@ public class ErrorHandler {
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     @ResponseBody
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ResultWrapper<String> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
-        var result = new ResultWrapper<String>(20, e.getBindingResult().getFieldError().getDefaultMessage());
+    public ResultWrapper methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
+        var result = ResultWrapper.wrap(20, e.getBindingResult().getFieldError().getDefaultMessage());
         return result;
     }
 
@@ -33,7 +33,7 @@ public class ErrorHandler {
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
     @ResponseBody
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ResultWrapper<String> httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException e) {
-        return new ResultWrapper<>(20, e.getMessage());
+    public ResultWrapper httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException e) {
+        return ResultWrapper.wrap(20, e.getMessage());
     }
 }

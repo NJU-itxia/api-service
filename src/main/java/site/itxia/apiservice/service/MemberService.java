@@ -26,10 +26,10 @@ public class MemberService {
         return memberDTOList;
     }
 
-    public ResultWrapper<MemberDTO> addNewMember(MemberAddVo memberAddVo) {
+    public ResultWrapper addNewMember(MemberAddVo memberAddVo) {
         var po = MemberMapper.MAPPER.voToPo(memberAddVo);
         po.setPassword(PasswordUtil.encrypt(po.getPassword())); //加密密码
         var result = memberRepository.save(po);
-        return new ResultWrapper<>(MemberMapper.MAPPER.memberToMemberDTO(result));
+        return ResultWrapper.wrapSuccess(MemberMapper.MAPPER.memberToMemberDTO(result));
     }
 }
