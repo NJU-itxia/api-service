@@ -10,7 +10,7 @@ import site.itxia.apiservice.vo.RequestOrderVo;
 /**
  * @author zhenxi
  */
-@Mapper
+@Mapper(uses = EnumableMapper.class)
 public interface OrderMapper {
 
     public static OrderMapper INSTANCE = Mappers.getMapper(OrderMapper.class);
