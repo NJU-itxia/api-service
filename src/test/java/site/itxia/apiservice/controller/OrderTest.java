@@ -61,7 +61,7 @@ public class OrderTest {
                 .appendField("qq", "2501314")
                 .appendField("model", "🍎 macbook air")
                 .appendField("warranty", 1)
-                .appendField("location", 2)
+                .appendField("campus", 2)
                 .appendField("description", "玩不了cf");
         var result = mockMvc.perform(post("/order")
                 .content(json.toJSONString())
@@ -88,7 +88,7 @@ public class OrderTest {
                 .appendField("qq", "32767")
                 .appendField("model", "❀为")
                 .appendField("warranty", 1)
-                .appendField("location", 2)
+                .appendField("campus", 2)
                 .appendField("description", "玩不了csgo");
         var orderResult = mockMvc.perform(post("/order")
                 .content(orderJson.toJSONString())
