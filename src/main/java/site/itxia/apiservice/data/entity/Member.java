@@ -20,14 +20,14 @@ public class Member {
     @Column(name = "login_name", nullable = false)
     private String loginName;
 
-    @Column(nullable = false)
+    @Column(name = "`password`",nullable = false)
     private String password;
 
-    @Column(nullable = false, columnDefinition = "bit(2) default 0")
+    @Column(name = "`role`", nullable = false, columnDefinition = "bit(2) default 0")
     @Enumerated(value = EnumType.ORDINAL)
     private MemberRole role;
 
-    @Column(nullable = false, columnDefinition = "bit(1) default 0")
+    @Column(name = "`status`", nullable = false, columnDefinition = "bit(1) default 0")
     @Enumerated(value = EnumType.ORDINAL)
     private MemberStatus status;
 

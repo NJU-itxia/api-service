@@ -40,10 +40,10 @@ public class Order {
     @Enumerated(value = EnumType.ORDINAL)
     private Campus campus;
 
-    @Column(columnDefinition = "text")
+    @Column(name = "`description`", columnDefinition = "text")
     private String description;
 
-    @Column(nullable = false, columnDefinition = "bit(3) default 0")
+    @Column(name = "`status`", nullable = false, columnDefinition = "bit(3) default 0")
     @Enumerated(value = EnumType.ORDINAL)
     private OrderStatus status;
 

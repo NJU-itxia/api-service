@@ -23,10 +23,10 @@ public class OrderHistory {
     @Column(name = "member_id", nullable = false)
     private int memberID;
 
-    @Column(nullable = false, columnDefinition = "bit(3)")
+    @Column(name = "`action`", nullable = false, columnDefinition = "bit(3)")
     @Enumerated(value = EnumType.ORDINAL)
     private OrderAction action;
 
-    @Column(nullable = false)
+    @Column(name = "`time`", nullable = false)
     private int time;
 }
