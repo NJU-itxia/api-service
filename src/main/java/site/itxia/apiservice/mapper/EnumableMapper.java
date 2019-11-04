@@ -2,10 +2,7 @@ package site.itxia.apiservice.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-import site.itxia.apiservice.enumable.MemberRole;
-import site.itxia.apiservice.enumable.MemberStatus;
-import site.itxia.apiservice.enumable.OrderAction;
-import site.itxia.apiservice.enumable.OrderWarranty;
+import site.itxia.apiservice.enumable.*;
 import site.itxia.apiservice.exception.NoSuchEnumException;
 
 @Mapper
@@ -63,5 +60,16 @@ public interface EnumableMapper {
         return orderAction.getAction();
     }
 
+    default Campus mapCampus(int campusInt) {
+        for (var campus : Campus.values()) {
+            if (campus.getLocation() == campusInt) {
+                return campus;
+            }
+        }
+        throw new NoSuchEnumException();
+    }
 
+    default int mapCampus(Campus campus) {
+        return campus.getLocation();
+    }
 }
