@@ -11,7 +11,7 @@ resources:
   - container: mysql
     image: mysql:8.0.18
     environment:
-    - MYSQL_DATABASES=test_app_itxia
+    - MYSQL_DATABASES=api
     - MYSQL_ROOT_PASSWORD=root
     
 pool:
@@ -22,7 +22,7 @@ services:
   
 steps:
 - bash: |
-    mysql -uroot -proot -e "create database api;"
+    mysql -uroot -proot -e "create database api; select version();"
   displayName: init database
   
 - task: Gradle@2
