@@ -87,7 +87,7 @@ public class OrderService {
         orderHistory = orderHistoryRepository.save(orderHistory);
 
         //更新预约单状态
-        var updatedOrder = updateOrderStatus(orderID, orderHistory.getAction());
+        var updatedOrder = updateOrderStatus(orderID, orderHistory.getAction().getAction());
 
         return getOrder(orderID);
     }
