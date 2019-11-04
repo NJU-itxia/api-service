@@ -6,19 +6,25 @@
 trigger:
 - master
 - dev
-
+resources:
+  containers:
+  - container: mysql
+    image: mysql:8.0.18
+    environment:
+    - MYSQL_DATABASES=test_app_itxia
+    - MYSQL_ROOT_PASSWORD=root
+    
 pool:
   vmImage: 'ubuntu-latest'
 
+services:
+  mysql: mysql
+  
 steps:
-- task: MysqlDeploymentOnMachineGroup@1
-  inputs:
-    TaskNameSelector: 'InlineSqlTask'
-    SqlInline: 'create database app_itxia;'
-    ServerName: 'localhost'
-    DatabaseName: 'api'
-    SqlUsername: 'root'
-    SqlPassword: 'root'
+- bash: |
+    mysql -uroot -proot -e "create database api;"
+  displayName: init database
+  
 - task: Gradle@2
   inputs:
     workingDirectory: ''
