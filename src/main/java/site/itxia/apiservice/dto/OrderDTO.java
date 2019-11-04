@@ -24,7 +24,7 @@ public class OrderDTO {
 
     private int warranty;
 
-    private int location;
+    private int campus;
 
     private String description;
 

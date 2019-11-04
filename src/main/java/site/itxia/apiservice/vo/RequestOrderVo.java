@@ -24,7 +24,7 @@ public class RequestOrderVo {
     private int warranty;
 
     @Range(min = 1, max = 2)    //0为全部校区
-    private int location;
+    private int campus;
 
     private String description;
 
