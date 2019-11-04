@@ -1,8 +1,8 @@
 package site.itxia.apiservice.data.entity;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import site.itxia.apiservice.enumable.MemberRole;
+import site.itxia.apiservice.enumable.MemberStatus;
 
 import javax.persistence.*;
 
@@ -24,9 +24,11 @@ public class Member {
     private String password;
 
     @Column(nullable = false, columnDefinition = "bit(2) default 0")
-    private int role;
+    @Enumerated(value = EnumType.ORDINAL)
+    private MemberRole role;
 
     @Column(nullable = false, columnDefinition = "bit(1) default 0")
-    private int status;
+    @Enumerated(value = EnumType.ORDINAL)
+    private MemberStatus status;
 
 }

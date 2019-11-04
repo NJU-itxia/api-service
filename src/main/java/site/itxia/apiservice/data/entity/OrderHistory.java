@@ -1,6 +1,7 @@
 package site.itxia.apiservice.data.entity;
 
 import lombok.Data;
+import site.itxia.apiservice.enumable.OrderAction;
 
 import javax.persistence.*;
 
@@ -23,7 +24,8 @@ public class OrderHistory {
     private int memberID;
 
     @Column(nullable = false, columnDefinition = "bit(3)")
-    private int action;
+    @Enumerated(value = EnumType.ORDINAL)
+    private OrderAction action;
 
     @Column(nullable = false)
     private int time;

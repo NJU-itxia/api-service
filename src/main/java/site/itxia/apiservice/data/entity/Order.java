@@ -1,7 +1,9 @@
 package site.itxia.apiservice.data.entity;
 
 import lombok.Data;
+import site.itxia.apiservice.enumable.Campus;
 import site.itxia.apiservice.enumable.OrderStatus;
+import site.itxia.apiservice.enumable.OrderWarranty;
 
 import javax.persistence.*;
 
@@ -31,10 +33,12 @@ public class Order {
     private String model;
 
     @Column(nullable = false, columnDefinition = "bit(2) default 0")
-    private int warranty;
+    @Enumerated(value = EnumType.ORDINAL)
+    private OrderWarranty warranty;
 
     @Column(nullable = false, columnDefinition = "bit(2)")
-    private int location;
+    @Enumerated(value = EnumType.ORDINAL)
+    private Campus campus;
 
     @Column(columnDefinition = "text")
     private String description;
