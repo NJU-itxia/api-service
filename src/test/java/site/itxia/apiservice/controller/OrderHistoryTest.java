@@ -10,11 +10,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MimeTypeUtils;
 import site.itxia.apiservice.enumable.*;
 
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -79,25 +82,56 @@ public class OrderHistoryTest {
         return JsonPath.parse(memberResult.getResponse().getContentAsString()).read("$.payload.id");
     }
 
+    private ResultActions handleOrder(OrderAction action, int memberID) throws Exception {
+        var json = (new JSONObject())
+                .appendField("orderID", orderID)
+                .appendField("action", action.getAction());
+        return mockMvc.perform(post("/order/" + orderID + "/handle")
+                .content(json.toJSONString())
+                .contentType(MimeTypeUtils.APPLICATION_JSON_VALUE)
+                .header("memberID", memberID)
+        );
+    }
+
+    private ResultActions retrieveOrder() throws Exception {
+        return mockMvc.perform(get("/order?id=" + orderID));
+    }
+
     /**
      * 获取预约单.
      */
     @Test
     public void testRetrieveOrder() throws Exception {
-        var json = (new JSONObject())
-                .appendField("name", "哈皮")
-                .appendField("phone", "+86-8000")
-                .appendField("qq", "2501314")
-                .appendField("model", "🍎 macbook air")
-                .appendField("warranty", 1)
-                .appendField("campus", 2)
-                .appendField("description", "玩不了cf");
-        mockMvc.perform(get("/order?id=" + orderID)
-        )
+        retrieveOrder()
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.payload.id", is(orderID)))
                 .andExpect(jsonPath("$.payload.status", is(OrderStatus.CREATED.getStatus())))
                 .andExpect(jsonPath("$.payload.orderHistoryList", hasSize(0)));
+    }
+
+    /**
+     * 测试接单.
+     */
+    @Test
+    public void testHandleOrder() throws Exception {
+        var result = handleOrder(OrderAction.ACCEPT, normalMember1ID)
+                .andExpect(jsonPath("$.errorCode", is(ErrorCode.SUCCESS.getErrCode())))
+                .andExpect(jsonPath("$.payload.status", is(OrderStatus.ACCEPTED.getStatus())))
+                .andReturn();
+        ;
+        assertEquals(result.getResponse().getContentAsString(), retrieveOrder().andReturn().getResponse().getContentAsString());
+    }
+
+    /**
+     * 测试重复接单.
+     */
+    @Test
+    public void testMutipleAcceptOrder() throws Exception {
+        handleOrder(OrderAction.ACCEPT, normalMember1ID)
+                .andExpect(jsonPath("$.errorCode", is(ErrorCode.SUCCESS.getErrCode())));
+
+        handleOrder(OrderAction.ACCEPT, normalMember2ID)
+                .andExpect(jsonPath("$.errorCode", not(ErrorCode.ORDER_ALREADY_ACCEPTED.getErrCode())));
     }
 
 }
