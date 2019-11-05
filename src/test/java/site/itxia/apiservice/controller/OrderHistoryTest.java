@@ -126,12 +126,12 @@ public class OrderHistoryTest {
      * 测试重复接单.
      */
     @Test
-    public void testMutipleAcceptOrder() throws Exception {
+    public void testMultipleAcceptOrder() throws Exception {
         handleOrder(OrderAction.ACCEPT, normalMember1ID)
                 .andExpect(jsonPath("$.errorCode", is(ErrorCode.SUCCESS.getErrCode())));
 
         handleOrder(OrderAction.ACCEPT, normalMember2ID)
-                .andExpect(jsonPath("$.errorCode", not(ErrorCode.ORDER_ALREADY_ACCEPTED.getErrCode())));
+                .andExpect(jsonPath("$.errorCode", is(ErrorCode.ORDER_ALREADY_ACCEPTED.getErrCode())));
     }
 
 }
