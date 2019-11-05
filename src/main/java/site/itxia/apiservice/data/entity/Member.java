@@ -18,10 +18,10 @@ public class Member {
     @Column(name = "real_name", nullable = false)
     private String realName;
 
-    @Column(name = "login_name", nullable = false)
+    @Column(name = "login_name", nullable = false, unique = true)
     private String loginName;
 
-    @Column(name = "`password`",nullable = false)
+    @Column(name = "`password`", nullable = false)
     private String password;
 
     @Column(name = "`role`", nullable = false, columnDefinition = "bit(2) default 0")

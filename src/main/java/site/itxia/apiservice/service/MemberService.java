@@ -1,9 +1,11 @@
 package site.itxia.apiservice.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import site.itxia.apiservice.data.repository.MemberRepository;
 import site.itxia.apiservice.dto.MemberDTO;
+import site.itxia.apiservice.enumable.ErrorCode;
 import site.itxia.apiservice.mapper.MemberMapper;
 import site.itxia.apiservice.dto.ResultWrapper;
 import site.itxia.apiservice.util.PasswordUtil;
@@ -29,7 +31,12 @@ public class MemberService {
     public ResultWrapper addNewMember(MemberAddVo memberAddVo) {
         var po = MemberMapper.MAPPER.voToPo(memberAddVo);
         po.setPassword(PasswordUtil.encrypt(po.getPassword())); //加密密码
-        var result = memberRepository.save(po);
-        return ResultWrapper.wrapSuccess(MemberMapper.MAPPER.memberToMemberDTO(result));
+        try {
+            var result = memberRepository.save(po);
+            return ResultWrapper.wrapSuccess(MemberMapper.MAPPER.memberToMemberDTO(result));
+        } catch (DataIntegrityViolationException e) {
+            //loginName重复
+            return ResultWrapper.wrap(ErrorCode.MEMBER_ALREADY_EXISTS);
+        }
     }
 }
