@@ -34,6 +34,7 @@ public class OrderHistoryTest {
     private MockMvc mockMvc;
 
     private int normalMember1ID, normalMember2ID, adminMemberID;
+    private final int customerMemberID = 0;
     private int orderID;
 
     /**
@@ -82,6 +83,9 @@ public class OrderHistoryTest {
         return JsonPath.parse(memberResult.getResponse().getContentAsString()).read("$.payload.id");
     }
 
+    /**
+     * 处理预约单.
+     */
     private ResultActions handleOrder(OrderAction action, int memberID) throws Exception {
         var json = (new JSONObject())
                 .appendField("orderID", orderID)
@@ -93,6 +97,9 @@ public class OrderHistoryTest {
         );
     }
 
+    /**
+     * 获取预约单.
+     */
     private ResultActions retrieveOrder() throws Exception {
         return mockMvc.perform(get("/order?id=" + orderID));
     }
@@ -129,9 +136,45 @@ public class OrderHistoryTest {
     public void testMultipleAcceptOrder() throws Exception {
         handleOrder(OrderAction.ACCEPT, normalMember1ID)
                 .andExpect(jsonPath("$.errorCode", is(ErrorCode.SUCCESS.getErrCode())));
-
+        handleOrder(OrderAction.ACCEPT, normalMember1ID)
+                .andExpect(jsonPath("$.errorCode", is(ErrorCode.ORDER_ALREADY_ACCEPTED.getErrCode())));
         handleOrder(OrderAction.ACCEPT, normalMember2ID)
                 .andExpect(jsonPath("$.errorCode", is(ErrorCode.ORDER_ALREADY_ACCEPTED.getErrCode())));
     }
 
+    /**
+     * 测试废弃预约单.
+     */
+    @Test
+    public void testAbandonOrder() throws Exception {
+        //普通成员不能废弃
+        handleOrder(OrderAction.ABANDON, normalMember1ID)
+                .andExpect(jsonPath("$.errorCode", is(ErrorCode.UNAUTHORIZED.getErrCode())));
+        handleOrder(OrderAction.ABANDON, adminMemberID)
+                .andExpect(jsonPath("$.errorCode", is(ErrorCode.SUCCESS.getErrCode())));
+        //废弃后无法再接单
+        handleOrder(OrderAction.ABANDON, normalMember1ID)
+                .andExpect(jsonPath("$.errorCode", is(ErrorCode.ORDER_ALREADY_ABANDONED.getErrCode())));
+        handleOrder(OrderAction.ABANDON, adminMemberID)
+                .andExpect(jsonPath("$.errorCode", is(ErrorCode.ORDER_ALREADY_ABANDONED.getErrCode())));
+        //预约人也无法取消
+        handleOrder(OrderAction.CANCEL, customerMemberID)
+                .andExpect(jsonPath("$.errorCode", is(ErrorCode.ORDER_ALREADY_ABANDONED.getErrCode())));
+    }
+
+    /**
+     * 测试放回预约单.
+     */
+    @Test
+    public void testPutBackOrder() throws Exception {
+        handleOrder(OrderAction.ACCEPT, normalMember1ID)
+                .andExpect(jsonPath("$.errorCode", is(ErrorCode.SUCCESS.getErrCode())));
+        handleOrder(OrderAction.ACCEPT, normalMember2ID)
+                .andExpect(jsonPath("$.errorCode", is(ErrorCode.ORDER_ALREADY_ACCEPTED.getErrCode())));
+        //放回
+        handleOrder(OrderAction.PUT_BACK, normalMember1ID)
+                .andExpect(jsonPath("$.errorCode", is(ErrorCode.SUCCESS.getErrCode())));
+        handleOrder(OrderAction.ACCEPT, normalMember2ID)
+                .andExpect(jsonPath("$.errorCode", is(ErrorCode.SUCCESS.getErrCode())));
+    }
 }
