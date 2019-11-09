@@ -31,8 +31,7 @@ public class OrderController {
             //有qs，查询一个
             return ResultWrapper.wrapSuccess(orderService.getOrder(id));
         }
-        //TODO 处理没有qs的情况
-        return ResultWrapper.wrap(null);
+        return ResultWrapper.wrapSuccess(orderService.getAllOrder());
     }
 
     @PostMapping("/{orderID}/handle")

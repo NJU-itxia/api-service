@@ -67,6 +67,23 @@ public class OrderService {
         return dto;
     }
 
+    /**
+     * 获取预约单。(全部)
+     * TODO 改成pageable
+     *
+     * @return 预约单列表.
+     */
+    public List<OrderDTO> getAllOrder() {
+        var orderList = orderRepository.findAll();
+        var dtoList = new ArrayList<OrderDTO>();
+        for (Order order : orderList) {
+            var dto = orderMapper.orderToOrderDTO(order);
+            dto.setOrderHistoryList(getOrderHistoryDTOByOrderID(dto.getId()));
+            dtoList.add(dto);
+        }
+        return dtoList;
+    }
+
     public OrderDTO handleOrder(int memberID, HandleOrderVo handleOrderVo) {
         //TODO 验证状态
 
