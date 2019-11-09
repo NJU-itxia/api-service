@@ -38,7 +38,7 @@ public class PasswordUtil {
             salt = "";
             log.warn("加密密码盐为null.");
         }
-        var temp = DigestUtils.sha256Hex(originPassword.concat(salt));
+        var temp = DigestUtils.sha256Hex(originPassword).concat(salt);
         return DigestUtils.sha256Hex(temp);
     }
 
