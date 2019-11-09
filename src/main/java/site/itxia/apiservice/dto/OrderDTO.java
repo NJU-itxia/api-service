@@ -37,7 +37,7 @@ public class OrderDTO {
     /**
      * 额外信息
      * */
-    private List<OrderHistoryDTO> orderHistoryList;
+    private List<OrderHistoryDTO> history;
 
 
 }

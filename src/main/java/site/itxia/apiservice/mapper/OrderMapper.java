@@ -26,6 +26,6 @@ public interface OrderMapper {
 
 
     @Mapping(source = "status.status", target = "status")
-    @Mapping(target = "orderHistoryList", ignore = true)
+    @Mapping(target = "history", ignore = true)
     public OrderDTO orderToOrderDTO(Order order);
 }

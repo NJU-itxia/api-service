@@ -63,7 +63,7 @@ public class OrderService {
             return null;
         }
         var dto = orderMapper.orderToOrderDTO(order.get());
-        dto.setOrderHistoryList(getOrderHistoryDTOByOrderID(dto.getId()));
+        dto.setHistory(getOrderHistoryDTOByOrderID(dto.getId()));
         return dto;
     }
 
@@ -78,7 +78,7 @@ public class OrderService {
         var dtoList = new ArrayList<OrderDTO>();
         for (Order order : orderList) {
             var dto = orderMapper.orderToOrderDTO(order);
-            dto.setOrderHistoryList(getOrderHistoryDTOByOrderID(dto.getId()));
+            dto.setHistory(getOrderHistoryDTOByOrderID(dto.getId()));
             dtoList.add(dto);
         }
         return dtoList;
