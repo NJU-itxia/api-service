@@ -9,6 +9,7 @@ import site.itxia.apiservice.data.repository.OrderHistoryRepository;
 import site.itxia.apiservice.data.repository.OrderRepository;
 import site.itxia.apiservice.dto.OrderDTO;
 import site.itxia.apiservice.dto.OrderHistoryDTO;
+import site.itxia.apiservice.enumable.OrderAction;
 import site.itxia.apiservice.enumable.OrderStatus;
 import site.itxia.apiservice.mapper.OrderHistoryMapper;
 import site.itxia.apiservice.mapper.OrderMapper;
@@ -17,6 +18,7 @@ import site.itxia.apiservice.vo.HandleOrderVo;
 import site.itxia.apiservice.vo.RequestOrderVo;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -64,6 +66,28 @@ public class OrderService {
         }
         var dto = orderMapper.orderToOrderDTO(order.get());
         dto.setHistory(getOrderHistoryDTOByOrderID(dto.getId()));
+        //添加处理人
+        var handleList = orderHistoryRepository.getAllByOrderID(id);
+        if (handleList.size() > 0) {
+            //按时间排序，查找历史
+            //TODO 检查排序顺序
+            handleList.sort((o1, o2) -> o1.getTime() - o2.getTime());
+            Integer handlerID = null;
+            for (var handle : handleList) {
+                if (handle.getAction() == OrderAction.ACCEPT) {
+                    handlerID = handle.getMemberID();
+                } else if (handlerID != null && handlerID == handle.getMemberID() && handle.getAction() == OrderAction.PUT_BACK) {
+                    handlerID = null;
+                }
+            }
+            if (handlerID != null) {
+                var handler = memberRepository.findById(handlerID);
+                if (handler.isPresent()) {
+                    dto.setHandlerID(handlerID);
+                    dto.setHandlerName(handler.get().getRealName());
+                }
+            }
+        }
         return dto;
     }
 
@@ -84,25 +108,23 @@ public class OrderService {
         return dtoList;
     }
 
+    /**
+     * @return 更新后的预约单dto.
+     */
     public OrderDTO handleOrder(int memberID, HandleOrderVo handleOrderVo) {
-        //TODO 验证状态
+        //TODO 验证预约单存在、预约单状态
 
         var orderID = handleOrderVo.getOrderID();
-        var orderOptional = orderRepository.findById(orderID);
-        if (orderOptional.isEmpty()) {
-            //error
-        }
-        var order = orderOptional.get();
-        var dto = orderMapper.orderToOrderDTO(order);
+
 
         //保存历史记录
         var orderHistory = orderHistoryMapper.handleToOrderHistory(handleOrderVo);
         orderHistory.setMemberID(memberID);
         orderHistory.setTime(DateUtil.getCurrentUnixTime());
-        orderHistory = orderHistoryRepository.save(orderHistory);
+        orderHistoryRepository.save(orderHistory);
 
-        //更新预约单状态
-        var updatedOrder = updateOrderStatus(orderID, orderHistory.getAction().getAction());
+        //更新预约单(状态、处理人)
+        updateOrderStatus(orderID, handleOrderVo.getAction());
 
         return getOrder(orderID);
     }
@@ -111,10 +133,10 @@ public class OrderService {
      * TODO 错误状态判断
      * TODO 使用枚举代替硬编码数字
      */
-    private Order updateOrderStatus(int orderID, int action) {
+    private void updateOrderStatus(int orderID, int action) {
         OrderStatus newState;
         var order = orderRepository.findById(orderID).get();
-        //憨批java语法
+        //憨批java语法，enum.int不能用在switch
         switch (action) {
             case 0:
                 newState = OrderStatus.ACCEPTED;
@@ -135,7 +157,7 @@ public class OrderService {
                 newState = OrderStatus.CREATED;
         }
         order.setStatus(newState);
-        return orderRepository.save(order);
+        orderRepository.save(order);
     }
 
     /**
