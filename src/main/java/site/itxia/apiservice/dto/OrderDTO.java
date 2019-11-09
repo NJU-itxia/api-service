@@ -35,9 +35,18 @@ public class OrderDTO {
     private int time;
 
     /**
-     * 额外信息
-     * */
+     * 预约单操作历史.
+     */
     private List<OrderHistoryDTO> history;
 
+    /**
+     * 处理人ID.
+     */
+    private int handlerID;
+
+    /**
+     * 处理人姓名.
+     */
+    private String handlerName;
 
 }
