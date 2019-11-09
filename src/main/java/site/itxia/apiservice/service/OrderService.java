@@ -1,6 +1,5 @@
 package site.itxia.apiservice.service;
 
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import site.itxia.apiservice.data.entity.Order;
@@ -18,7 +17,6 @@ import site.itxia.apiservice.vo.HandleOrderVo;
 import site.itxia.apiservice.vo.RequestOrderVo;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -49,8 +47,8 @@ public class OrderService {
         order.setTime(DateUtil.getCurrentUnixTime());
         order.setStatus(OrderStatus.CREATED);
         var savedOrder = orderRepository.save(order);
-        var dto = orderMapper.orderToOrderDTO(savedOrder);
-        return dto;
+        var orderID = savedOrder.getId();
+        return getOrder(orderID);
     }
 
     /**
