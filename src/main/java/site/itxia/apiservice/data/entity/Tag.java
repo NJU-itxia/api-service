@@ -1,5 +1,6 @@
 package site.itxia.apiservice.data.entity;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -7,6 +8,7 @@ import javax.persistence.*;
 /**
  * @author zhenxi
  */
+@Builder
 @Data
 @Entity
 @Table(name = "tag")

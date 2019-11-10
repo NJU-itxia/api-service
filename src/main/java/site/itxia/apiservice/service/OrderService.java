@@ -1,5 +1,6 @@
 package site.itxia.apiservice.service;
 
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import site.itxia.apiservice.data.entity.Order;

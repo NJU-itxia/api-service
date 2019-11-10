@@ -39,4 +39,17 @@ public class MemberService {
             return ResultWrapper.wrap(ErrorCode.MEMBER_ALREADY_EXISTS);
         }
     }
+
+    /**
+     *
+     * @param memberID 成员ID
+     * @return 成员姓名. 如果为null表示找不到这个ID.
+     */
+    public String getMemberNameByID(int memberID) {
+        var member = memberRepository.findById(memberID);
+        if (member == null) {
+            return null;
+        }
+        return member.getRealName();
+    }
 }
