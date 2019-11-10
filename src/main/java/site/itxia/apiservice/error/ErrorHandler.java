@@ -24,7 +24,7 @@ public class ErrorHandler {
     @ResponseBody
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ResultWrapper methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
-        return ResultWrapper.wrap(ErrorCode.INVALID_ARGUMENTS, e.getBindingResult().getFieldError().getDefaultMessage());
+        return ResultWrapper.wrap(ErrorCode.INVALID_ARGUMENTS, e.getBindingResult().getFieldError().getField() + ":" + e.getBindingResult().getFieldError().getDefaultMessage());
     }
 
     /**
