@@ -23,5 +23,5 @@ public class TagDto {
     /**
      * 被预约单引用次数.
      */
-    private int useBy;
+    private int useCount;
 }

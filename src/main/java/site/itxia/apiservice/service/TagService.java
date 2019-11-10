@@ -72,7 +72,7 @@ public class TagService {
         return TagDto.builder()
                 .id(tag.getId())
                 .tagName(tag.getTagName())
-                .useBy(countTagUsage(tag.getId()))
+                .useCount(countTagUsage(tag.getId()))
                 .addTime(tag.getAddTime())
                 .addByMemberID(tag.getAddByMemberID())
                 .addByMemberName(memberService.getMemberNameByID(tag.getAddByMemberID()))
