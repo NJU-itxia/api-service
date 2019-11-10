@@ -28,6 +28,6 @@ public class OrderTag {
     @Column(name = "add_time", nullable = false)
     private int addTime;
 
-    @Column(nullable = false)
+    @Column(name = "`delete`", nullable = false)
     private boolean delete;
 }
