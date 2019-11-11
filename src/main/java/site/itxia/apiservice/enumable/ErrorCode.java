@@ -11,7 +11,8 @@ public enum ErrorCode {
     JSON_PARSE_ERROR(12, "JSON解析错误"),
     MEMBER_ALREADY_EXISTS(13, "成员已存在"),
     ORDER_ALREADY_ACCEPTED(14, "预约单早已被接受"),
-    ORDER_ALREADY_ABANDONED(15, "预约单已被废弃");
+    ORDER_ALREADY_ABANDONED(15, "预约单已被废弃"),
+    FILE_NOT_FOUND(16, "未找到指定文件");
 
     private int errCode;
     private String errMessage;

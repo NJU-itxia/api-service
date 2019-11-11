@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import site.itxia.apiservice.dto.ResultWrapper;
+import site.itxia.apiservice.enumable.ErrorCode;
 import site.itxia.apiservice.service.UploadService;
 
 /**
@@ -23,9 +24,18 @@ public class UploadController {
         return ResultWrapper.wrapSuccess(uploadService.getUploadFileInfo(id));
     }
 
-    @GetMapping("")
-    public byte[] getFile(@RequestParam int id) {
+    @GetMapping("/{id:\\d+}")
+    public byte[] getFile(@PathVariable int id) {
         return uploadService.getFile(id);
+    }
+
+    @GetMapping("/{id:\\d+}/info")
+    public ResultWrapper getFileInfo(@PathVariable int id) {
+        var dto = uploadService.getUploadFileInfo(id);
+        if (dto == null) {
+            return ResultWrapper.wrap(ErrorCode.FILE_NOT_FOUND);
+        }
+        return ResultWrapper.wrapSuccess(dto);
     }
 
 }
