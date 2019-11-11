@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import site.itxia.apiservice.data.entity.Upload;
 import site.itxia.apiservice.data.repository.UploadRepository;
 import site.itxia.apiservice.dto.UploadDto;
+import site.itxia.apiservice.util.DateUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,6 +42,7 @@ public class UploadService {
                     .sha256sum(sha256sum)
                     .size(multipartFile.getSize())
                     .uploadBy(memberID)
+                    .time(DateUtil.getCurrentUnixTime())
                     .delete(false)
                     .build();
             entity = uploadRepository.save(entity);
