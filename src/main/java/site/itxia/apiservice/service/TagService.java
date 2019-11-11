@@ -138,7 +138,7 @@ public class TagService {
      * @return 被引用次数.
      */
     private int countTagUsage(int tagID) {
-        return 0;
+        return orderTagRepository.countByTagID(tagID);
     }
 
 }
