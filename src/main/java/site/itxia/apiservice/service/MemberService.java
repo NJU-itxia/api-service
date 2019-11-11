@@ -46,9 +46,12 @@ public class MemberService {
      * @return 成员姓名. 如果为null表示找不到这个ID.
      */
     public String getMemberNameByID(int memberID) {
+        if(memberID==0){
+            return "访客";
+        }
         var member = memberRepository.findById(memberID);
         if (member == null) {
-            return null;
+            return "查无此人";
         }
         return member.getRealName();
     }
