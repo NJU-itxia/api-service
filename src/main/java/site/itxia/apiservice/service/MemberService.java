@@ -17,8 +17,12 @@ import java.util.List;
 @Service
 public class MemberService {
 
-    @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    public MemberService(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
 
     public List<MemberDTO> getAllMember() {
         var memberDTOList = new ArrayList<MemberDTO>();
@@ -41,12 +45,11 @@ public class MemberService {
     }
 
     /**
-     *
      * @param memberID 成员ID
      * @return 成员姓名. 如果为null表示找不到这个ID.
      */
     public String getMemberNameByID(int memberID) {
-        if(memberID==0){
+        if (memberID == 0) {
             return "访客";
         }
         var member = memberRepository.findById(memberID);

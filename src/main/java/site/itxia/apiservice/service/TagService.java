@@ -20,9 +20,7 @@ import java.util.List;
 public class TagService {
 
     private TagRepository tagRepository;
-
     private OrderTagRepository orderTagRepository;
-
     private MemberService memberService;
 
     @Autowired

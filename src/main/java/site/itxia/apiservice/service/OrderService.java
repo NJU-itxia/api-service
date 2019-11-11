@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import site.itxia.apiservice.data.entity.Order;
 import site.itxia.apiservice.data.entity.OrderHistory;
-import site.itxia.apiservice.data.entity.OrderUpload;
 import site.itxia.apiservice.data.repository.MemberRepository;
 import site.itxia.apiservice.data.repository.OrderHistoryRepository;
 import site.itxia.apiservice.data.repository.OrderRepository;
@@ -21,7 +20,6 @@ import site.itxia.apiservice.vo.HandleOrderVo;
 import site.itxia.apiservice.vo.RequestOrderVo;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -30,18 +28,22 @@ import java.util.List;
 @Service
 public class OrderService {
 
-    @Autowired
     private OrderRepository orderRepository;
-    @Autowired
     private MemberRepository memberRepository;
-    @Autowired
     private OrderHistoryRepository orderHistoryRepository;
-    @Autowired
-    private OrderUploadRepository orderUploadRepository;
-    @Autowired
     private TagService tagService;
-    @Autowired
     private UploadService uploadService;
+
+    @Autowired
+    public OrderService(OrderRepository orderRepository, MemberRepository memberRepository,
+                        OrderHistoryRepository orderHistoryRepository,
+                        TagService tagService, UploadService uploadService) {
+        this.orderRepository = orderRepository;
+        this.memberRepository = memberRepository;
+        this.orderHistoryRepository = orderHistoryRepository;
+        this.tagService = tagService;
+        this.uploadService = uploadService;
+    }
 
     private OrderMapper orderMapper = OrderMapper.INSTANCE;
     private OrderHistoryMapper orderHistoryMapper = OrderHistoryMapper.INSTANCE;

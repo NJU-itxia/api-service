@@ -23,13 +23,16 @@ import java.util.List;
 @Service
 public class UploadService {
 
-    @Autowired
     private UploadRepository uploadRepository;
-    @Autowired
     private OrderUploadRepository orderUploadRepository;
+    private MemberService memberService;
 
     @Autowired
-    private MemberService memberService;
+    public UploadService(UploadRepository uploadRepository, OrderUploadRepository orderUploadRepository, MemberService memberService) {
+        this.uploadRepository = uploadRepository;
+        this.orderUploadRepository = orderUploadRepository;
+        this.memberService = memberService;
+    }
 
     public Integer uploadFile(MultipartFile multipartFile, Integer memberID) {
         if (memberID == null) {
