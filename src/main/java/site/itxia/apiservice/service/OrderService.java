@@ -61,16 +61,6 @@ public class OrderService {
         var savedOrder = orderRepository.save(order);
         var orderID = savedOrder.getId();
 
-        //保存附件信息
-        for (int uploadID : requestOrderVo.getAttachments()) {
-            var entity = OrderUpload.builder()
-                    .orderID(orderID)
-                    .uploadID(uploadID)
-                    .delete(false)
-                    .build();
-            orderUploadRepository.save(entity);
-        }
-
         //保存标签信息
         tagService.attachTagsToOrder(0, orderID, requestOrderVo.getTags());
 
