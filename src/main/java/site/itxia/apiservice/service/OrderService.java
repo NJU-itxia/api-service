@@ -38,6 +38,10 @@ public class OrderService {
     private OrderHistoryRepository orderHistoryRepository;
     @Autowired
     private OrderUploadRepository orderUploadRepository;
+    @Autowired
+    private TagService tagService;
+    @Autowired
+    private UploadService uploadService;
 
     private OrderMapper orderMapper = OrderMapper.INSTANCE;
     private OrderHistoryMapper orderHistoryMapper = OrderHistoryMapper.INSTANCE;
@@ -67,7 +71,11 @@ public class OrderService {
             orderUploadRepository.save(entity);
         }
 
-        //TODO 保存标签信息
+        //保存标签信息
+        tagService.attachTagsToOrder(0, orderID, requestOrderVo.getTags());
+
+        //保存附件信息
+        uploadService.attachUploadsToOrder(orderID, requestOrderVo.getAttachments());
 
         return getOrder(orderID);
     }
@@ -107,6 +115,13 @@ public class OrderService {
                 }
             }
         }
+
+        //添加标签
+        dto.setTags(tagService.getTagDtosByOrderID(id));
+
+        //添加附件
+        dto.setAttachments(uploadService.getUploadDtosByOrderID(id));
+
         return dto;
     }
 

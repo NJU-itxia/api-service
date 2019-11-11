@@ -49,4 +49,13 @@ public class OrderDTO {
      */
     private String handlerName;
 
+    /**
+     * 标签列表.
+     */
+    private List<TagDto> tags;
+
+    /**
+     * 附件列表.
+     */
+    private List<UploadDto> attachments;
 }

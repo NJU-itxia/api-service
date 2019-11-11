@@ -30,8 +30,12 @@ public class RequestOrderVo {
     private String description;
 
     /**
+     * 标签(ID)数组.
+     */
+    private List<Integer> tags;
+
+    /**
      * 附件(ID)数组.
      */
     private List<Integer> attachments;
-
 }

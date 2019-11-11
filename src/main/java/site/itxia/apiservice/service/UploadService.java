@@ -4,7 +4,9 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import site.itxia.apiservice.data.entity.OrderUpload;
 import site.itxia.apiservice.data.entity.Upload;
+import site.itxia.apiservice.data.repository.OrderUploadRepository;
 import site.itxia.apiservice.data.repository.UploadRepository;
 import site.itxia.apiservice.dto.UploadDto;
 import site.itxia.apiservice.util.DateUtil;
@@ -12,6 +14,8 @@ import site.itxia.apiservice.util.DateUtil;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author zhenxi
@@ -21,6 +25,8 @@ public class UploadService {
 
     @Autowired
     private UploadRepository uploadRepository;
+    @Autowired
+    private OrderUploadRepository orderUploadRepository;
 
     @Autowired
     private MemberService memberService;
@@ -91,4 +97,28 @@ public class UploadService {
                 .build();
     }
 
+    /**
+     * 将附件添加到预约单.
+     *
+     * @param orderID      预约单ID.
+     * @param uploadIDList 附件ID列表.
+     */
+    public void attachUploadsToOrder(int orderID, List<Integer> uploadIDList) {
+        for (int uploadID : uploadIDList) {
+            var entity = OrderUpload.builder()
+                    .orderID(orderID)
+                    .uploadID(uploadID)
+                    .delete(false)
+                    .build();
+            orderUploadRepository.save(entity);
+        }
+    }
+
+    public List<UploadDto> getUploadDtosByOrderID(int orderID) {
+        var list = new ArrayList<UploadDto>();
+        for (var entity : orderUploadRepository.findByOrderID(orderID)) {
+            list.add(getUploadFileInfo(entity.getUploadID()));
+        }
+        return list;
+    }
 }

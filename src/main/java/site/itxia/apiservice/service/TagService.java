@@ -2,6 +2,7 @@ package site.itxia.apiservice.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import site.itxia.apiservice.data.entity.OrderTag;
 import site.itxia.apiservice.data.entity.Tag;
 import site.itxia.apiservice.data.repository.OrderTagRepository;
 import site.itxia.apiservice.data.repository.TagRepository;
@@ -60,6 +61,38 @@ public class TagService {
             resultList.add(tagToDto(tag));
         }
         return resultList;
+    }
+
+    /**
+     * 将标签添加到预约单.
+     *
+     * @param memberID  成员ID.
+     * @param orderID   预约单ID.
+     * @param tagIDList 标签ID列表.
+     */
+    public void attachTagsToOrder(int memberID, int orderID, List<Integer> tagIDList) {
+        for (int tagID : tagIDList) {
+            var entity = OrderTag.builder()
+                    .orderID(orderID)
+                    .tagID(tagID)
+                    .addByMemberID(memberID)
+                    .addTime(DateUtil.getCurrentUnixTime())
+                    .delete(false)
+                    .build();
+            orderTagRepository.save(entity);
+        }
+    }
+
+    /**
+     * @param orderID 预约单ID.
+     * @return 预约单对应的标签dto列表.
+     */
+    public List<TagDto> getTagDtosByOrderID(int orderID) {
+        var list = new ArrayList<TagDto>();
+        for (var tag : orderTagRepository.findByOrderID(orderID)) {
+            list.add(getTag(tag.getTagID()));
+        }
+        return list;
     }
 
     /**
