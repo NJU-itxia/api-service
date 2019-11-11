@@ -22,6 +22,9 @@ public class UploadService {
     @Autowired
     private UploadRepository uploadRepository;
 
+    @Autowired
+    private MemberService memberService;
+
     public Integer uploadFile(MultipartFile multipartFile, Integer memberID) {
         if (memberID == null) {
             memberID = 0;
@@ -69,11 +72,23 @@ public class UploadService {
     }
 
     /**
-     * TODO
      * 获取上传文件信息.
      */
-    public UploadDto getUploadInfo() {
-        return null;
+    public UploadDto getUploadFileInfo(int id) {
+        var optional = uploadRepository.findById(id);
+        if (optional.isEmpty()) {
+            return null;
+        }
+        var entity = optional.get();
+        return UploadDto.builder()
+                .id(entity.getId())
+                .fileName(entity.getFileName())
+                .sha256sum(entity.getSha256sum())
+                .uploadByMemberID(entity.getUploadBy())
+                .uploadByMemberName(memberService.getMemberNameByID(entity.getUploadBy()))
+                .size(entity.getSize())
+                .time(entity.getTime())
+                .build();
     }
 
 }

@@ -12,9 +12,11 @@ public class UploadDto {
 
     private int id;
 
+    private String fileName;
+
     private int uploadByMemberID;
 
-    private int uploadByMemberName;
+    private String uploadByMemberName;
 
     private long size;
 
