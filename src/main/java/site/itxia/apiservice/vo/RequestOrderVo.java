@@ -4,6 +4,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
  * @author zhenxi
@@ -27,5 +28,10 @@ public class RequestOrderVo {
     private int campus;
 
     private String description;
+
+    /**
+     * 附件(ID)数组.
+     */
+    private List<Integer> attachments;
 
 }

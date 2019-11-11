@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import site.itxia.apiservice.data.entity.Order;
 import site.itxia.apiservice.data.entity.OrderHistory;
+import site.itxia.apiservice.data.entity.OrderUpload;
 import site.itxia.apiservice.data.repository.MemberRepository;
 import site.itxia.apiservice.data.repository.OrderHistoryRepository;
 import site.itxia.apiservice.data.repository.OrderRepository;
+import site.itxia.apiservice.data.repository.OrderUploadRepository;
 import site.itxia.apiservice.dto.OrderDTO;
 import site.itxia.apiservice.dto.OrderHistoryDTO;
 import site.itxia.apiservice.enumable.OrderAction;
@@ -34,6 +36,8 @@ public class OrderService {
     private MemberRepository memberRepository;
     @Autowired
     private OrderHistoryRepository orderHistoryRepository;
+    @Autowired
+    private OrderUploadRepository orderUploadRepository;
 
     private OrderMapper orderMapper = OrderMapper.INSTANCE;
     private OrderHistoryMapper orderHistoryMapper = OrderHistoryMapper.INSTANCE;
@@ -46,11 +50,25 @@ public class OrderService {
      */
     public OrderDTO addOrder(RequestOrderVo requestOrderVo) {
         var order = orderMapper.requestOrderVoToOrder(requestOrderVo);
+
         //设置为当前时间
         order.setTime(DateUtil.getCurrentUnixTime());
         order.setStatus(OrderStatus.CREATED);
         var savedOrder = orderRepository.save(order);
         var orderID = savedOrder.getId();
+
+        //保存附件信息
+        for (int uploadID : requestOrderVo.getAttachments()) {
+            var entity = OrderUpload.builder()
+                    .orderID(orderID)
+                    .uploadID(uploadID)
+                    .delete(false)
+                    .build();
+            orderUploadRepository.save(entity);
+        }
+
+        //TODO 保存标签信息
+
         return getOrder(orderID);
     }
 
