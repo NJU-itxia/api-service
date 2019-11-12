@@ -58,4 +58,8 @@ public class MemberService {
         }
         return member.getRealName();
     }
+
+    public MemberDTO getMemberByID(int memberID) {
+        return MemberMapper.MAPPER.memberToMemberDTO(memberRepository.findById(memberID));
+    }
 }
