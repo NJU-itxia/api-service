@@ -127,9 +127,7 @@ public class OrderService {
         var orderList = orderRepository.findAll();
         var dtoList = new ArrayList<OrderDTO>();
         for (Order order : orderList) {
-            var dto = orderMapper.orderToOrderDTO(order);
-            dto.setHistory(getOrderHistoryDTOByOrderID(dto.getId()));
-            dtoList.add(dto);
+            dtoList.add(getOrder(order.getId()));
         }
         return dtoList;
     }
