@@ -81,6 +81,17 @@ public class UploadService {
     }
 
     /**
+     * 获取上传文件的文件名.
+     */
+    public String getUploadFileName(int id) {
+        var optional = uploadRepository.findById(id);
+        if (optional.isEmpty()) {
+            return null;
+        }
+        return optional.get().getFileName();
+    }
+
+    /**
      * 获取上传文件信息.
      */
     public UploadDto getUploadFileInfo(int id) {

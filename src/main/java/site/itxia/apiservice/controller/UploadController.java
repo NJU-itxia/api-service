@@ -7,6 +7,8 @@ import site.itxia.apiservice.dto.ResultWrapper;
 import site.itxia.apiservice.enumable.ErrorCode;
 import site.itxia.apiservice.service.UploadService;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * @author zhenxi
  */
@@ -25,7 +27,8 @@ public class UploadController {
     }
 
     @GetMapping("/{id:\\d+}")
-    public byte[] getFile(@PathVariable int id) {
+    public byte[] getFile(@PathVariable int id, HttpServletResponse response) {
+        response.setHeader("content-disposition", "attachment;filename=" + uploadService.getUploadFileName(id));
         return uploadService.getFile(id);
     }
 
