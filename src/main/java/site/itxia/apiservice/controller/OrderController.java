@@ -26,8 +26,8 @@ public class OrderController {
     }
 
     @GetMapping("")
-    public ResultWrapper getOrder(@RequestParam(required = false) int id) {
-        if (id > 0) {
+    public ResultWrapper getOrder(@RequestParam(required = false) Integer id) {
+        if (id != null) {
             //有qs，查询一个
             return ResultWrapper.wrapSuccess(orderService.getOrder(id));
         }
