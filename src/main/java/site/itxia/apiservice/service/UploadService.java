@@ -10,6 +10,7 @@ import site.itxia.apiservice.data.repository.OrderUploadRepository;
 import site.itxia.apiservice.data.repository.UploadRepository;
 import site.itxia.apiservice.dto.UploadDto;
 import site.itxia.apiservice.util.DateUtil;
+import site.itxia.apiservice.util.ImageUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -65,13 +66,44 @@ public class UploadService {
         }
     }
 
+    /**
+     * 读取完整文件.
+     *
+     * @param fileID 文件ID
+     * @return 文件byte[]
+     */
     public byte[] getFile(int fileID) {
+        return readFile(fileID, false);
+    }
+
+    /**
+     * 读取缩略图文件.
+     *
+     * @param fileID 文件ID
+     * @return 缩略图文件byte[]
+     */
+    public byte[] getThumbnailFile(int fileID) {
+        return readFile(fileID, true);
+    }
+
+    /**
+     * 读取完整文件.
+     *
+     * @param fileID 文件ID
+     * @param resize 是否需要缩略图
+     * @return 文件byte[]
+     */
+    private byte[] readFile(int fileID, boolean resize) {
         var optional = uploadRepository.findById(fileID);
         if (optional.isEmpty()) {
             return null;
         }
         var entity = optional.get();
         try (var fileInputStream = new FileInputStream(new File(entity.getSha256sum()))) {
+            if (resize) {
+                //生成缩略图并返回
+                return ImageUtil.resize(fileInputStream);
+            }
             return fileInputStream.readAllBytes();
         } catch (Exception e) {
             e.printStackTrace();
@@ -79,6 +111,7 @@ public class UploadService {
         //TODO 处理错误
         return null;
     }
+
 
     /**
      * 获取上传文件的文件名.
