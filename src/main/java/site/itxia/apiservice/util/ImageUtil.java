@@ -1,6 +1,7 @@
 package site.itxia.apiservice.util;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import site.itxia.apiservice.exception.UploadFileNotFoundException;
 
 import javax.imageio.ImageIO;
@@ -10,12 +11,13 @@ import java.io.*;
 /**
  * @author zhenxi
  */
+@Component
 public class ImageUtil {
 
     /**
      * 缩略图最大尺寸.
      */
-    private static int maxImageSize = 480;
+    private static int maxImageSize;
 
     /**
      * 从配置文件中读取.
