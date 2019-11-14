@@ -22,19 +22,25 @@ public class UploadController {
     @PostMapping("")
     public ResultWrapper uploadFile(@RequestParam(name = "file") MultipartFile remoteFile,
                                     @RequestHeader(required = false) Integer memberID) {
-        int id = uploadService.uploadFile(remoteFile, memberID);
-        return ResultWrapper.wrapSuccess(uploadService.getUploadFileInfo(id));
+        var dto = uploadService.uploadFile(remoteFile, memberID);
+        return ResultWrapper.wrapSuccess(dto);
     }
 
-    @GetMapping("/{id:\\d+}")
-    public byte[] getFile(@PathVariable int id, HttpServletResponse response) {
-        response.setHeader("content-disposition", "attachment;filename=" + uploadService.getUploadFileName(id));
-        return uploadService.getFile(id);
+    @GetMapping("/{sha256sum:\\w{64}}")
+    public byte[] getFile(@PathVariable String sha256sum, HttpServletResponse response) {
+        response.setHeader("content-disposition", "attachment;filename=" + uploadService.getUploadFileName(sha256sum));
+        return uploadService.getFile(sha256sum);
     }
 
-    @GetMapping("/{id:\\d+}/info")
-    public ResultWrapper getFileInfo(@PathVariable int id) {
-        var dto = uploadService.getUploadFileInfo(id);
+    @GetMapping("/{sha256sum:\\w{64}}/thumbnail")
+    public byte[] getFileThumbnail(@PathVariable String sha256sum, HttpServletResponse response) {
+        response.setHeader("content-disposition", "attachment;filename=" + uploadService.getUploadFileName(sha256sum));
+        return uploadService.getThumbnailFile(sha256sum);
+    }
+
+    @GetMapping("/{sha256sum:\\w{64}}/info")
+    public ResultWrapper getFileInfo(@PathVariable String sha256sum) {
+        var dto = uploadService.getUploadFileDto(sha256sum);
         if (dto == null) {
             return ResultWrapper.wrap(ErrorCode.FILE_NOT_FOUND);
         }

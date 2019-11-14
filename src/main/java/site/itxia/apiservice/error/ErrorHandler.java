@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import site.itxia.apiservice.dto.ResultWrapper;
 import site.itxia.apiservice.enumable.ErrorCode;
+import site.itxia.apiservice.exception.UploadFileNotFoundException;
 
 /**
  * @author zhenxi
@@ -46,5 +47,15 @@ public class ErrorHandler {
     @ResponseBody
     public ResultWrapper missingRequestHeaderExceptionHandler(MissingRequestHeaderException e) {
         return ResultWrapper.wrap(ErrorCode.UNAUTHORIZED, "身份认证失败, 请尝试重新登录.");
+    }
+
+    /**
+     * 处理上传文件找不到的错误.
+     * 返回HTTP 404错误码.
+     */
+    @ExceptionHandler(value = UploadFileNotFoundException.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public void uploadFileNotFoundExceptionHandler(UploadFileNotFoundException e) {
+        //返回404即可.
     }
 }
