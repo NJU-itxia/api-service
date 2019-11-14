@@ -44,7 +44,7 @@ public class OrderDTO {
     /**
      * 处理人ID.
      */
-    private int handlerID;
+    private Integer handlerID;
 
     /**
      * 处理人姓名.
