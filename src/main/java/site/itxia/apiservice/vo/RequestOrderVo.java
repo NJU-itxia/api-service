@@ -4,6 +4,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,10 +33,10 @@ public class RequestOrderVo {
     /**
      * 标签(ID)数组.
      */
-    private List<Integer> tags;
+    private List<Integer> tags = new ArrayList<>();
 
     /**
      * 附件(ID)数组.
      */
-    private List<Integer> attachments;
+    private List<Integer> attachments = new ArrayList<>();
 }

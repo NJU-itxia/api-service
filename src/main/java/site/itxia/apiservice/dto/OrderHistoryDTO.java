@@ -1,10 +1,12 @@
 package site.itxia.apiservice.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
  * @author zhenxi
  */
+@Builder
 @Data
 public class OrderHistoryDTO {
 

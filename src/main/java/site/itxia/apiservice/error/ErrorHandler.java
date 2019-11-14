@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import site.itxia.apiservice.dto.ResultWrapper;
 import site.itxia.apiservice.enumable.ErrorCode;
+import site.itxia.apiservice.exception.ItxiaRuntimeException;
 import site.itxia.apiservice.exception.UploadFileNotFoundException;
 
 /**
@@ -57,5 +58,14 @@ public class ErrorHandler {
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public void uploadFileNotFoundExceptionHandler(UploadFileNotFoundException e) {
         //返回404即可.
+    }
+
+    /**
+     * 处理自定义的错误.
+     */
+    @ExceptionHandler(value = ItxiaRuntimeException.class)
+    @ResponseBody
+    public ResultWrapper itxiaRuntimeExceptionHandler(ItxiaRuntimeException e) {
+        return ResultWrapper.wrap(e.getErrorCode());
     }
 }

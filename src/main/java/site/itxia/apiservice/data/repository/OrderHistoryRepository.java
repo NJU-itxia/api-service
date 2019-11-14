@@ -9,4 +9,6 @@ public interface OrderHistoryRepository extends CrudRepository<OrderHistory, Int
 
     List<OrderHistory> getAllByOrderID(int orderID);
 
+    List<OrderHistory> getAllByOrderIDOrderByTimeAsc(int orderID);
+
 }

@@ -1,5 +1,7 @@
 package site.itxia.apiservice.enumable;
 
+import site.itxia.apiservice.exception.NoSuchEnumException;
+
 /**
  * 预约单动作.
  * 用于在orderHistory中记录.
@@ -34,5 +36,14 @@ public enum OrderAction {
 
     public int getAction() {
         return action;
+    }
+
+    public static OrderAction from(int action) {
+        for (var oa : OrderAction.values()) {
+            if (oa.getAction() == action) {
+                return oa;
+            }
+        }
+        throw new NoSuchEnumException();
     }
 }

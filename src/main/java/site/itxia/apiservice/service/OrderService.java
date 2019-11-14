@@ -1,6 +1,7 @@
 package site.itxia.apiservice.service;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import site.itxia.apiservice.data.entity.Order;
@@ -8,11 +9,9 @@ import site.itxia.apiservice.data.entity.OrderHistory;
 import site.itxia.apiservice.data.repository.MemberRepository;
 import site.itxia.apiservice.data.repository.OrderHistoryRepository;
 import site.itxia.apiservice.data.repository.OrderRepository;
-import site.itxia.apiservice.data.repository.OrderUploadRepository;
 import site.itxia.apiservice.dto.OrderDTO;
-import site.itxia.apiservice.dto.OrderHistoryDTO;
-import site.itxia.apiservice.enumable.OrderAction;
-import site.itxia.apiservice.enumable.OrderStatus;
+import site.itxia.apiservice.enumable.*;
+import site.itxia.apiservice.exception.ItxiaRuntimeException;
 import site.itxia.apiservice.mapper.OrderHistoryMapper;
 import site.itxia.apiservice.mapper.OrderMapper;
 import site.itxia.apiservice.util.DateUtil;
@@ -33,175 +32,221 @@ public class OrderService {
     private OrderHistoryRepository orderHistoryRepository;
     private TagService tagService;
     private UploadService uploadService;
+    private MemberService memberService;
+    private OrderHistoryService orderHistoryService;
 
     @Autowired
     public OrderService(OrderRepository orderRepository, MemberRepository memberRepository,
-                        OrderHistoryRepository orderHistoryRepository,
-                        TagService tagService, UploadService uploadService) {
+                        OrderHistoryRepository orderHistoryRepository, TagService tagService,
+                        UploadService uploadService, MemberService memberService,
+                        OrderHistoryService orderHistoryService) {
         this.orderRepository = orderRepository;
         this.memberRepository = memberRepository;
         this.orderHistoryRepository = orderHistoryRepository;
         this.tagService = tagService;
         this.uploadService = uploadService;
+        this.memberService = memberService;
+        this.orderHistoryService = orderHistoryService;
     }
-
-    private OrderMapper orderMapper = OrderMapper.INSTANCE;
-    private OrderHistoryMapper orderHistoryMapper = OrderHistoryMapper.INSTANCE;
 
     /**
      * 收到新的预约单.
      *
-     * @param requestOrderVo 预约单表格信息.
+     * @param vo 预约单表格信息.
      * @return 预约单.(包含ID)
      */
-    public OrderDTO addOrder(RequestOrderVo requestOrderVo) {
-        var order = orderMapper.requestOrderVoToOrder(requestOrderVo);
-
-        //设置为当前时间
-        order.setTime(DateUtil.getCurrentUnixTime());
-        order.setStatus(OrderStatus.CREATED);
+    public OrderDTO addOrder(RequestOrderVo vo) {
+        var order = Order.builder()
+                .customerName(vo.getName())
+                .customerPhone(vo.getPhone())
+                .customerQQ(vo.getQq())
+                .model(vo.getModel())
+                .warranty(OrderWarranty.from(vo.getWarranty()))
+                .campus(Campus.from(vo.getCampus()))
+                .description(vo.getDescription())
+                .status(OrderStatus.CREATED)
+                .summary(null)
+                .time(DateUtil.getCurrentUnixTime())
+                .build();
+        //保存到数据库中
         var savedOrder = orderRepository.save(order);
         var orderID = savedOrder.getId();
 
-        //保存标签信息
-        tagService.attachTagsToOrder(0, orderID, requestOrderVo.getTags());
+        //保存标签信息, memberID 0 表示游客
+        tagService.attachTagsToOrder(0, orderID, vo.getTags());
 
         //保存附件信息
-        uploadService.attachUploadsToOrder(orderID, requestOrderVo.getAttachments());
+        uploadService.attachUploadsToOrder(orderID, vo.getAttachments());
 
-        return getOrder(orderID);
+        return getOrderDto(orderID);
     }
 
     /**
-     * 获取预约单。(单个)
+     * 获取预约单(单个).
      *
-     * @param id 预约单ID.
-     * @return 预约单.
+     * @param orderID 预约单id
+     * @return 预约单dto
      */
-    public OrderDTO getOrder(int id) {
-        var order = orderRepository.findById(id);
-        if (order.isEmpty()) {
-            return null;
-        }
-        var dto = orderMapper.orderToOrderDTO(order.get());
-        dto.setHistory(getOrderHistoryDTOByOrderID(dto.getId()));
-        //添加处理人
-        var handleList = orderHistoryRepository.getAllByOrderID(id);
-        if (handleList.size() > 0) {
-            //按时间排序，查找历史
-            //TODO 检查排序顺序
-            handleList.sort((o1, o2) -> o1.getTime() - o2.getTime());
-            Integer handlerID = null;
-            for (var handle : handleList) {
-                if (handle.getAction() == OrderAction.ACCEPT) {
-                    handlerID = handle.getMemberID();
-                } else if (handlerID != null && handlerID == handle.getMemberID() && handle.getAction() == OrderAction.PUT_BACK) {
-                    handlerID = null;
-                }
-            }
-            if (handlerID != null) {
-                var handler = memberRepository.findById(handlerID);
-                if (handler.isPresent()) {
-                    dto.setHandlerID(handlerID);
-                    dto.setHandlerName(handler.get().getRealName());
-                }
-            }
-        }
-
-        //添加标签
-        dto.setTags(tagService.getTagDtosByOrderID(id));
-
-        //添加附件
-        dto.setAttachments(uploadService.getUploadDtosByOrderID(id));
-
-        return dto;
+    public OrderDTO getOrderDto(int orderID) {
+        return toOrderDto(getOrderEntity(orderID));
     }
 
     /**
-     * 获取预约单。(全部)
+     * 获取Order entity.
+     *
+     * @param orderID 预约单id
+     * @return 预约单entity
+     * @throws ItxiaRuntimeException 找不到预约单时抛出
+     */
+    private Order getOrderEntity(int orderID) {
+        var optional = orderRepository.findById(orderID);
+        if (optional.isEmpty()) {
+            throw new ItxiaRuntimeException(ErrorCode.ORDER_NOT_FOUND);
+        }
+        return optional.get();
+    }
+
+    /**
+     * 获取预约单dto.
+     *
+     * @param entity 预约单entity
+     * @return 预约单dto
+     */
+    private OrderDTO toOrderDto(Order entity) {
+        var orderID = entity.getId();
+
+        //标签
+        var tags = tagService.getTagDtosByOrderID(orderID);
+
+        //附件
+        var attachments = uploadService.getUploadDtosByOrderID(orderID);
+
+        //接单历史
+        var history = orderHistoryService.getOrderHistoryDTOByOrderID(orderID);
+
+        //处理人
+        var handlerID = orderHistoryService.getHandlerByOrderID(orderID);
+        var handlerName = memberService.getMemberNameByID(handlerID);
+
+        return OrderDTO.builder()
+                .id(entity.getId())
+                .customerName(entity.getCustomerName())
+                .customerPhone(entity.getCustomerPhone())
+                .customerQQ(entity.getCustomerQQ())
+                .model(entity.getModel())
+                .warranty(entity.getWarranty().getWarranty())
+                .campus(entity.getCampus().getLocation())
+                .description(entity.getDescription())
+                .status(entity.getStatus().getStatus())
+                .summary(entity.getSummary())
+                .time(entity.getTime())
+                .tags(tags)
+                .attachments(attachments)
+                .handlerID(handlerID)
+                .handlerName(handlerName)
+                .history(history)
+                .build();
+    }
+
+    /**
+     * 获取预约单(全部).
      * TODO 改成pageable
      *
      * @return 预约单列表.
      */
-    public List<OrderDTO> getAllOrder() {
+    public List<OrderDTO> getAllOrderDto() {
         var orderList = orderRepository.findAll();
         var dtoList = new ArrayList<OrderDTO>();
-        for (Order order : orderList) {
-            dtoList.add(getOrder(order.getId()));
+        for (Order entity : orderList) {
+            dtoList.add(toOrderDto(entity));
         }
         return dtoList;
     }
 
     /**
-     * @return 更新后的预约单dto.
-     */
-    public OrderDTO handleOrder(int memberID, HandleOrderVo handleOrderVo) {
-        //TODO 验证预约单存在、预约单状态
-
-        var orderID = handleOrderVo.getOrderID();
-
-
-        //保存历史记录
-        var orderHistory = orderHistoryMapper.handleToOrderHistory(handleOrderVo);
-        orderHistory.setMemberID(memberID);
-        orderHistory.setTime(DateUtil.getCurrentUnixTime());
-        orderHistoryRepository.save(orderHistory);
-
-        //更新预约单(状态、处理人)
-        updateOrderStatus(orderID, handleOrderVo.getAction());
-
-        return getOrder(orderID);
-    }
-
-    /**
-     * TODO 错误状态判断
-     * TODO 使用枚举代替硬编码数字
-     */
-    private void updateOrderStatus(int orderID, int action) {
-        OrderStatus newState;
-        var order = orderRepository.findById(orderID).get();
-        //憨批java语法，enum.int不能用在switch
-        switch (action) {
-            case 0:
-                newState = OrderStatus.ACCEPTED;
-                break;
-            case 1:
-                newState = OrderStatus.CREATED;
-                break;
-            case 2:
-                newState = OrderStatus.COMPLETED;
-                break;
-            case 3:
-                newState = OrderStatus.CANCELED;
-                break;
-            case 4:
-                newState = OrderStatus.ABANDONED;
-                break;
-            default:
-                newState = OrderStatus.CREATED;
-        }
-        order.setStatus(newState);
-        orderRepository.save(order);
-    }
-
-    /**
-     * 获取预约单的全部历史记录.
+     * 处理接单.
      *
-     * @param orderID 预约单id.
-     * @return 历史记录列表.
+     * @param memberID 成员id
+     * @param vo       接单信息vo
+     * @return 更新后的预约单dto
      */
-    private List<OrderHistoryDTO> getOrderHistoryDTOByOrderID(int orderID) {
-        //TODO 优化性能，直接用sql筛选
-        var orderHistoryDTOList = new ArrayList<OrderHistoryDTO>();
-        for (OrderHistory orderHistory : orderHistoryRepository.findAll()) {
-            if (orderHistory.getOrderID() == orderID) {
-                var dto = orderHistoryMapper.toDTO(orderHistory);
-                //插入成员名
-                dto.setMemberName(memberRepository.findById(dto.getMemberID()).getRealName());
-                orderHistoryDTOList.add(dto);
+    public OrderDTO handleOrder(int memberID, HandleOrderVo vo) {
+        @AllArgsConstructor
+        @Getter
+        class StateTransfer {
+            private OrderStatus oldStatus;      //预约单旧状态
+            private OrderAction action;         //预约单处理动作
+            private OrderStatus newStatus;      //预约单新状态
+            private MemberRole requiredRole;    //需要的最小权限
+
+            /**
+             * @param status 当前状态
+             * @param action 将要进行的动作
+             * @return 是否可以进行该动作
+             * */
+            private boolean canDoAction(OrderStatus status, int action) {
+                return status == this.oldStatus
+                        && action == this.action.getAction();
+            }
+
+            /**
+             * @param role 成员角色
+             * @return 是否有权限执行该动作
+             * */
+            private boolean hasPermission(MemberRole role) {
+                return role.getRole() >= this.requiredRole.getRole();
             }
         }
-        return orderHistoryDTOList;
-    }
+        //状态转移表 (少写了很多if else)
+        StateTransfer[] stateTransfers = {
+                new StateTransfer(OrderStatus.CREATED, OrderAction.ACCEPT, OrderStatus.ACCEPTED, MemberRole.MEMBER),
+                new StateTransfer(OrderStatus.CREATED, OrderAction.CANCEL, OrderStatus.CANCELED, MemberRole.GUEST),
+                new StateTransfer(OrderStatus.CREATED, OrderAction.ABANDON, OrderStatus.ABANDONED, MemberRole.ADMIN),
 
+                new StateTransfer(OrderStatus.ACCEPTED, OrderAction.PUT_BACK, OrderStatus.CREATED, MemberRole.MEMBER),
+                new StateTransfer(OrderStatus.ACCEPTED, OrderAction.FINISH, OrderStatus.COMPLETED, MemberRole.MEMBER),
+                new StateTransfer(OrderStatus.ACCEPTED, OrderAction.CANCEL, OrderStatus.CANCELED, MemberRole.GUEST),
+                new StateTransfer(OrderStatus.ACCEPTED, OrderAction.ABANDON, OrderStatus.ABANDONED, MemberRole.ADMIN),
+        };
+
+        //获取预约单entity
+        var orderID = vo.getOrderID();
+        var entity = getOrderEntity(orderID);
+        var oldStatus = entity.getStatus();
+        var action = vo.getAction();
+        var role = memberService.getMemberRole(memberID);
+
+        //寻找符合的状态转移
+        StateTransfer stateTransfer = null;
+        for (var transfer : stateTransfers) {
+            if (transfer.canDoAction(oldStatus, action)) {
+                if (transfer.hasPermission(role)) {
+                    stateTransfer = transfer;
+                } else {
+                    //无权限执行该动作
+                    throw new ItxiaRuntimeException(ErrorCode.UNAUTHORIZED);
+                }
+                break;
+            }
+        }
+        if (stateTransfer == null) {
+            //没有符合的动作
+            throw new ItxiaRuntimeException(ErrorCode.ACTION_NOT_MATCH_ORDER);
+        }
+
+        //更新预约单状态
+        entity.setStatus(stateTransfer.getNewStatus());
+        orderRepository.save(entity);
+
+        //保存历史记录
+        var orderHistory = OrderHistory.builder()
+                .orderID(orderID)
+                .action(OrderAction.from(vo.getAction()))
+                .memberID(memberID)
+                .time(DateUtil.getCurrentUnixTime())
+                .build();
+        orderHistoryRepository.save(orderHistory);
+
+        return getOrderDto(orderID);
+    }
 }

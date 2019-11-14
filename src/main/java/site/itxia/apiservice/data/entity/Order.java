@@ -1,6 +1,9 @@
 package site.itxia.apiservice.data.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import site.itxia.apiservice.enumable.Campus;
 import site.itxia.apiservice.enumable.OrderStatus;
 import site.itxia.apiservice.enumable.OrderWarranty;
@@ -11,6 +14,9 @@ import javax.persistence.*;
  * @author zhenxi
  * 预约单实体.
  */
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Data
 @Entity
 @Table(name = "`order`")

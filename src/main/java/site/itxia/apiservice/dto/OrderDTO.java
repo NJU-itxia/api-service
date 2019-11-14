@@ -1,5 +1,6 @@
 package site.itxia.apiservice.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
  * <p>
  * 预约单信息
  */
+@Builder
 @Data
 public class OrderDTO {
 

@@ -17,7 +17,6 @@ import site.itxia.apiservice.enumable.ErrorCode;
 import site.itxia.apiservice.enumable.MemberRole;
 import site.itxia.apiservice.enumable.MemberStatus;
 
-import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -94,7 +93,7 @@ class MemberServiceTest {
                 .content(member2.toJSONString())
                 .contentType(MimeTypeUtils.APPLICATION_JSON_VALUE)
         )
-                .andExpect(jsonPath("$.errorCode", Matchers.is(ErrorCode.MEMBER_ALREADY_EXISTS.getErrCode())));
+                .andExpect(jsonPath("$.errorCode", Matchers.is(ErrorCode.LOGIN_NAME_ALREADY_EXISTS.getErrCode())));
 
     }
 

@@ -29,9 +29,9 @@ public class OrderController {
     public ResultWrapper getOrder(@RequestParam(required = false) Integer id) {
         if (id != null) {
             //有qs，查询一个
-            return ResultWrapper.wrapSuccess(orderService.getOrder(id));
+            return ResultWrapper.wrapSuccess(orderService.getOrderDto(id));
         }
-        return ResultWrapper.wrapSuccess(orderService.getAllOrder());
+        return ResultWrapper.wrapSuccess(orderService.getAllOrderDto());
     }
 
     @PostMapping("/{orderID}/handle")
