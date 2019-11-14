@@ -1,7 +1,9 @@
 package site.itxia.apiservice.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
 public class MemberDTO {
     private int id;

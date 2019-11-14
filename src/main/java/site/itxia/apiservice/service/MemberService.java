@@ -1,15 +1,14 @@
 package site.itxia.apiservice.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import site.itxia.apiservice.data.entity.Member;
 import site.itxia.apiservice.data.repository.MemberRepository;
 import site.itxia.apiservice.dto.MemberDTO;
 import site.itxia.apiservice.enumable.ErrorCode;
 import site.itxia.apiservice.enumable.MemberRole;
+import site.itxia.apiservice.enumable.MemberStatus;
 import site.itxia.apiservice.exception.ItxiaRuntimeException;
-import site.itxia.apiservice.mapper.MemberMapper;
 import site.itxia.apiservice.dto.ResultWrapper;
 import site.itxia.apiservice.util.PasswordUtil;
 import site.itxia.apiservice.vo.MemberAddVo;
@@ -29,25 +28,44 @@ public class MemberService {
 
     public List<MemberDTO> getAllMember() {
         var memberDTOList = new ArrayList<MemberDTO>();
-        for (var member : memberRepository.findAll()) {
-            memberDTOList.add(MemberMapper.MAPPER.memberToMemberDTO(member));
+        for (var entity : memberRepository.findAll()) {
+            memberDTOList.add(entityToDto(entity));
         }
         return memberDTOList;
     }
 
-    public ResultWrapper addNewMember(MemberAddVo memberAddVo) {
-        var po = MemberMapper.MAPPER.voToPo(memberAddVo);
-        po.setPassword(PasswordUtil.encrypt(po.getPassword())); //加密密码
+    public MemberDTO getMemberDtoByID(int memberID) {
+        return entityToDto(getMember(memberID));
+    }
 
+    public ResultWrapper addNewMember(MemberAddVo vo) {
         //检查登录名是否已存在
-        var optional = memberRepository.findByLoginName(memberAddVo.getLoginName());
+        var optional = memberRepository.findByLoginName(vo.getLoginName());
         if (optional.isPresent()) {
             throw new ItxiaRuntimeException(ErrorCode.LOGIN_NAME_ALREADY_EXISTS);
         }
 
         //保存新账号
-        var result = memberRepository.save(po);
-        return ResultWrapper.wrapSuccess(MemberMapper.MAPPER.memberToMemberDTO(result));
+        var entity = Member.builder()
+                .realName(vo.getRealName())
+                .loginName(vo.getLoginName())
+                .password(PasswordUtil.encrypt(vo.getPassword()))
+                .role(MemberRole.from(vo.getRole()))
+                .status(MemberStatus.from(vo.getRole()))
+                .build();
+        var savedEntity = memberRepository.save(entity);
+        return ResultWrapper.wrapSuccess(entityToDto(savedEntity));
+    }
+
+
+    private MemberDTO entityToDto(Member entity) {
+        return MemberDTO.builder()
+                .id(entity.getId())
+                .loginName(entity.getLoginName())
+                .realName(entity.getRealName())
+                .role(entity.getRole().getRole())
+                .status(entity.getStatus().getStatus())
+                .build();
     }
 
     /**
@@ -73,9 +91,5 @@ public class MemberService {
             throw new ItxiaRuntimeException(ErrorCode.MEMBER_NOT_FOUND);
         }
         return optional.get();
-    }
-
-    public MemberDTO getMemberByID(int memberID) {
-        return MemberMapper.MAPPER.memberToMemberDTO(getMember(memberID));
     }
 }

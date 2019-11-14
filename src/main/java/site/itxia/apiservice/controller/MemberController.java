@@ -17,7 +17,7 @@ public class MemberController {
 
     @GetMapping("")
     public ResultWrapper getSelf(@RequestHeader int memberID) {
-        return ResultWrapper.wrapSuccess(memberService.getMemberByID(memberID));
+        return ResultWrapper.wrapSuccess(memberService.getMemberDtoByID(memberID));
     }
 
     @GetMapping("/all")

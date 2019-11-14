@@ -1,13 +1,19 @@
 package site.itxia.apiservice.data.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import site.itxia.apiservice.enumable.MemberRole;
 import site.itxia.apiservice.enumable.MemberStatus;
 
 import javax.persistence.*;
 
-@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Data
+@Entity
 @Table(name = "`member`")
 public class Member {
 

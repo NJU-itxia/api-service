@@ -1,5 +1,7 @@
 package site.itxia.apiservice.enumable;
 
+import site.itxia.apiservice.exception.NoSuchEnumException;
+
 /**
  * 成员角色.
  * 用于权限控制.
@@ -26,5 +28,14 @@ public enum MemberRole {
 
     public int getRole() {
         return role;
+    }
+
+    public static MemberRole from(int role) {
+        for (var mr : MemberRole.values()) {
+            if (mr.getRole() == role) {
+                return mr;
+            }
+        }
+        throw new NoSuchEnumException();
     }
 }
