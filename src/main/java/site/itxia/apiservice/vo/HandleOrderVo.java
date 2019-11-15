@@ -11,6 +11,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class HandleOrderVo {
 
+    @Range(min = 0)
     int orderID;
 
     @Range(min = 0, max = 4)
