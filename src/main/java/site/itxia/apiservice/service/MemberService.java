@@ -51,7 +51,7 @@ public class MemberService {
                 .loginName(vo.getLoginName())
                 .password(PasswordUtil.encrypt(vo.getPassword()))
                 .role(MemberRole.from(vo.getRole()))
-                .status(MemberStatus.from(vo.getRole()))
+                .status(MemberStatus.from(vo.getStatus()))
                 .build();
         var savedEntity = memberRepository.save(entity);
         return ResultWrapper.wrapSuccess(entityToDto(savedEntity));
