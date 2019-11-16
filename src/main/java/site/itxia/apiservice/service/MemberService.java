@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import site.itxia.apiservice.data.entity.Member;
 import site.itxia.apiservice.data.repository.MemberRepository;
 import site.itxia.apiservice.dto.MemberDTO;
+import site.itxia.apiservice.enumable.Campus;
 import site.itxia.apiservice.enumable.ErrorCode;
 import site.itxia.apiservice.enumable.MemberRole;
 import site.itxia.apiservice.enumable.MemberStatus;
@@ -50,6 +51,7 @@ public class MemberService {
                 .realName(vo.getRealName())
                 .loginName(vo.getLoginName())
                 .password(PasswordUtil.encrypt(vo.getPassword()))
+                .campus(Campus.from(vo.getCampus()))
                 .role(MemberRole.from(vo.getRole()))
                 .status(MemberStatus.from(vo.getStatus()))
                 .build();
@@ -63,6 +65,7 @@ public class MemberService {
                 .id(entity.getId())
                 .loginName(entity.getLoginName())
                 .realName(entity.getRealName())
+                .campus(entity.getCampus().getLocation())
                 .role(entity.getRole().getRole())
                 .status(entity.getStatus().getStatus())
                 .build();

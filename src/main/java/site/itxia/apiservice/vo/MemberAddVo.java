@@ -17,6 +17,8 @@ public class MemberAddVo {
     @NotBlank
     @Pattern(regexp = "^\\w{8,16}$",message = "密码要求：8-16位数字、字母组合")
     private String password;
+    @Range(min = 1, max = 2,message = "校区参数错误")
+    private int campus;
     @Range(min = 0, max = 2,message = "角色参数错误")
     private int role;
     @Range(min = 0, max = 1,message = "状态码错误")

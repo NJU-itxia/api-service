@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import site.itxia.apiservice.enumable.Campus;
 import site.itxia.apiservice.enumable.MemberRole;
 import site.itxia.apiservice.enumable.MemberStatus;
 
@@ -29,6 +30,10 @@ public class Member {
 
     @Column(name = "`password`", nullable = false)
     private String password;
+
+    @Column(name = "`campus`", nullable = false)
+    @Enumerated(value = EnumType.ORDINAL)
+    private Campus campus;
 
     @Column(name = "`role`", nullable = false, columnDefinition = "bit(2) default 0")
     @Enumerated(value = EnumType.ORDINAL)
