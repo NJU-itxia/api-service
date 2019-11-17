@@ -12,6 +12,7 @@ import site.itxia.apiservice.enumable.MemberStatus;
 import site.itxia.apiservice.exception.ItxiaRuntimeException;
 import site.itxia.apiservice.dto.ResultWrapper;
 import site.itxia.apiservice.util.PasswordUtil;
+import site.itxia.apiservice.vo.ChangMemberStatusVo;
 import site.itxia.apiservice.vo.MemberAddVo;
 
 import java.util.ArrayList;
@@ -57,6 +58,20 @@ public class MemberService {
                 .build();
         var savedEntity = memberRepository.save(entity);
         return ResultWrapper.wrapSuccess(entityToDto(savedEntity));
+    }
+
+    /**
+     * 更改账号的状态(启用/禁用).
+     */
+    public ResultWrapper updateMemberStatus(int toChangeMemberID, Integer requestMemberID, ChangMemberStatusVo vo) {
+        //检查请求的身份权限，必须为管理员
+        if (requestMemberID == null || getMemberRole(requestMemberID) != MemberRole.ADMIN) {
+            throw new ItxiaRuntimeException(ErrorCode.UNAUTHORIZED);
+        }
+        var entity = getMember(toChangeMemberID);
+        entity.setStatus(MemberStatus.from(vo.getNewStatus()));
+        memberRepository.save(entity);
+        return ResultWrapper.wrapSuccess(null);
     }
 
 

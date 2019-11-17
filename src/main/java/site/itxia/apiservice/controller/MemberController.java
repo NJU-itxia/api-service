@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import site.itxia.apiservice.dto.ResultWrapper;
 import site.itxia.apiservice.service.MemberService;
+import site.itxia.apiservice.vo.ChangMemberStatusVo;
 import site.itxia.apiservice.vo.MemberAddVo;
 
 import javax.validation.Valid;
@@ -28,6 +29,13 @@ public class MemberController {
     @PostMapping("")
     public ResultWrapper add(@Valid @RequestBody MemberAddVo memberAddVo) {
         return memberService.addNewMember(memberAddVo);
+    }
+
+    @PutMapping("/{memberID:[0-9]{1,6}}/status")
+    public ResultWrapper updateMemberStatus(@PathVariable(name = "memberID") int toChangeMemberID,
+                                            @RequestHeader(name = "memberID") Integer requestMemberID,
+                                            @Valid @RequestBody ChangMemberStatusVo vo) {
+        return memberService.updateMemberStatus(toChangeMemberID, requestMemberID, vo);
     }
 
 }
