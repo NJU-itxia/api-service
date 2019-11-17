@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.Range;
  * @author zhenxi
  */
 @Data
-public class ChangMemberStatusVo {
+public class ChangeMemberRoleVo {
     @Range(min = 1, max = 2)
-    private int newStatus;
+    private int role;
 }
