@@ -8,6 +8,6 @@ import org.hibernate.validator.constraints.Range;
  */
 @Data
 public class ChangeMemberStatusVo {
-    @Range(min = 1, max = 2)
-    private int newStatus;
+    @Range(min = 0, max = 1)
+    private int status;
 }

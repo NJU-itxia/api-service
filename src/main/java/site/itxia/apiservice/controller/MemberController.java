@@ -38,7 +38,7 @@ public class MemberController {
                                             @Valid @RequestBody ChangeMemberStatusVo vo) {
         return memberService.updateMemberStatus(toChangeMemberID, requestMemberID, vo);
     }
-    
+
     @PutMapping("/{memberID:[0-9]{1,6}}/role")
     public ResultWrapper updateMemberRole(@PathVariable(name = "memberID") int toChangeMemberID,
                                             @RequestHeader(name = "memberID") Integer requestMemberID,

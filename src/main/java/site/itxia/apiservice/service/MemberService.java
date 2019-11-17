@@ -70,7 +70,7 @@ public class MemberService {
             throw new ItxiaRuntimeException(ErrorCode.UNAUTHORIZED);
         }
         var entity = getMember(toChangeMemberID);
-        entity.setStatus(MemberStatus.from(vo.getNewStatus()));
+        entity.setStatus(MemberStatus.from(vo.getStatus()));
         memberRepository.save(entity);
         return ResultWrapper.wrapSuccess(null);
     }
