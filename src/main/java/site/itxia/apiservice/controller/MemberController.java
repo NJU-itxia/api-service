@@ -4,9 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import site.itxia.apiservice.dto.ResultWrapper;
 import site.itxia.apiservice.service.MemberService;
-import site.itxia.apiservice.vo.ChangeMemberStatusVo;
-import site.itxia.apiservice.vo.ChangeMemberRoleVo;
-import site.itxia.apiservice.vo.MemberAddVo;
+import site.itxia.apiservice.vo.*;
 
 import javax.validation.Valid;
 
@@ -41,9 +39,23 @@ public class MemberController {
 
     @PutMapping("/{memberID:[0-9]{1,6}}/role")
     public ResultWrapper updateMemberRole(@PathVariable(name = "memberID") int toChangeMemberID,
-                                            @RequestHeader(name = "memberID") Integer requestMemberID,
-                                            @Valid @RequestBody ChangeMemberRoleVo vo) {
+                                          @RequestHeader(name = "memberID") Integer requestMemberID,
+                                          @Valid @RequestBody ChangeMemberRoleVo vo) {
         return memberService.updateMemberRole(toChangeMemberID, requestMemberID, vo);
+    }
+
+    @PutMapping("/{memberID:[0-9]{1,6}}/password")
+    public ResultWrapper updateMemberPassword(@PathVariable(name = "memberID") int toChangeMemberID,
+                                              @RequestHeader(name = "memberID") Integer requestMemberID,
+                                              @Valid @RequestBody MemberPasswordResetVo vo) {
+        return memberService.updateMemberPassword(toChangeMemberID, requestMemberID, vo);
+    }
+
+    @PutMapping("/{memberID:[0-9]{1,6}}/info")
+    public ResultWrapper updateMemberInfo(@PathVariable(name = "memberID") int toChangeMemberID,
+                                          @RequestHeader(name = "memberID") Integer requestMemberID,
+                                          @Valid @RequestBody ChangeMemberInfoVo vo) {
+        return memberService.updateMemberInfo(toChangeMemberID, requestMemberID, vo);
     }
 
 }

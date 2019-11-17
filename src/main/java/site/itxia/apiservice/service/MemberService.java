@@ -12,9 +12,7 @@ import site.itxia.apiservice.enumable.MemberStatus;
 import site.itxia.apiservice.exception.ItxiaRuntimeException;
 import site.itxia.apiservice.dto.ResultWrapper;
 import site.itxia.apiservice.util.PasswordUtil;
-import site.itxia.apiservice.vo.ChangeMemberStatusVo;
-import site.itxia.apiservice.vo.ChangeMemberRoleVo;
-import site.itxia.apiservice.vo.MemberAddVo;
+import site.itxia.apiservice.vo.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +60,7 @@ public class MemberService {
     }
 
     /**
+     * TODO 更新个人信息的重复代码太多了,封装一下...
      * 更改账号的状态(启用/禁用).
      */
     public ResultWrapper updateMemberStatus(int toChangeMemberID, Integer requestMemberID, ChangeMemberStatusVo vo) {
@@ -85,6 +84,40 @@ public class MemberService {
         }
         var entity = getMember(toChangeMemberID);
         entity.setRole(MemberRole.from(vo.getRole()));
+        memberRepository.save(entity);
+        return ResultWrapper.wrapSuccess(null);
+    }
+
+    /**
+     * 更改账号的密码.
+     */
+    public ResultWrapper updateMemberPassword(int toChangeMemberID, Integer requestMemberID, MemberPasswordResetVo vo) {
+        //检查请求的身份权限,必须为管理员,也可以是自己改自己的
+        if (requestMemberID == null) {
+            throw new ItxiaRuntimeException(ErrorCode.UNAUTHORIZED);
+        }
+        if (toChangeMemberID != requestMemberID && getMemberRole(requestMemberID) != MemberRole.ADMIN) {
+            throw new ItxiaRuntimeException(ErrorCode.UNAUTHORIZED);
+        }
+        var entity = getMember(toChangeMemberID);
+        entity.setPassword(PasswordUtil.encrypt(vo.getPassword()));
+        memberRepository.save(entity);
+        return ResultWrapper.wrapSuccess(null);
+    }
+
+    /**
+     * 更改账号的个人信息.
+     */
+    public ResultWrapper updateMemberInfo(int toChangeMemberID, Integer requestMemberID, ChangeMemberInfoVo vo) {
+        //检查请求的身份权限,必须为管理员,也可以是自己改自己的
+        if (requestMemberID == null) {
+            throw new ItxiaRuntimeException(ErrorCode.UNAUTHORIZED);
+        }
+        if (toChangeMemberID != requestMemberID && getMemberRole(requestMemberID) != MemberRole.ADMIN) {
+            throw new ItxiaRuntimeException(ErrorCode.UNAUTHORIZED);
+        }
+        var entity = getMember(toChangeMemberID);
+        entity.setCampus(Campus.from(vo.getCampus()));
         memberRepository.save(entity);
         return ResultWrapper.wrapSuccess(null);
     }
