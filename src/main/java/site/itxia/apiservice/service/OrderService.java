@@ -152,6 +152,10 @@ public class OrderService {
                 .build();
     }
 
+    public int getOrderCount() {
+        return (int) orderRepository.count();
+    }
+
     /**
      * 获取分页的预约单.
      *

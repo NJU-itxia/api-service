@@ -42,6 +42,11 @@ public class OrderController {
         return ResultWrapper.wrapSuccess(orderService.getOrderDtoByPage(page));
     }
 
+    @GetMapping("/count")
+    public ResultWrapper getOrderCount(){
+        return ResultWrapper.wrapSuccess(orderService.getOrderCount());
+    }
+
     @PostMapping("/{orderID}/handle")
     public ResultWrapper handleOrder(@PathVariable(name = "orderID") int orderID,
                                      @Valid @RequestBody HandleOrderVo handleOrderVo,
