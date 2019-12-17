@@ -18,7 +18,7 @@ public class RequestOrderVo {
 
     private String phone;
 
-    private String qq;
+    private String email;
 
     private String model;
 

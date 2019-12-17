@@ -20,7 +20,7 @@ public class OrderDTO {
 
     private String customerPhone;
 
-    private String customerQQ;
+    private String customerEmail;
 
     private String model;
 

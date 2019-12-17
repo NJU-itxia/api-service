@@ -32,8 +32,8 @@ public class Order {
     @Column(name = "customer_phone")
     private String customerPhone;
 
-    @Column(name = "customer_qq")
-    private String customerQQ;
+    @Column(name = "customer_email")
+    private String customerEmail;
 
     @Column(name = "model", nullable = false)
     private String model;
