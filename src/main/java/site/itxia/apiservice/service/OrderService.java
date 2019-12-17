@@ -172,6 +172,12 @@ public class OrderService {
      * @return 更新后的预约单dto
      */
     public OrderDTO handleOrder(int memberID, HandleOrderVo vo) {
+        if (memberID == 0) {
+            //非成员进行的操作，验证token
+            if (!isTokenValid(vo.getOrderID(), vo.getToken())) {
+                throw new ItxiaRuntimeException(ErrorCode.UNAUTHORIZED);
+            }
+        }
         @AllArgsConstructor
         @Getter
         class StateTransfer {
@@ -249,6 +255,14 @@ public class OrderService {
         orderHistoryRepository.save(orderHistory);
 
         return getOrderDto(orderID);
+    }
+
+    private boolean isTokenValid(int orderID, String token) {
+        if (token == null || token.isEmpty()) {
+            return false;
+        }
+        var entity = getOrderEntity(orderID);
+        return token.equals(entity.getToken());
     }
 
     private String generateUniqToken() {
