@@ -66,7 +66,7 @@ public class OrderService {
                 .status(OrderStatus.CREATED)
                 .summary(null)
                 .time(DateUtil.getCurrentUnixTime())
-                .token(TokenUtil.generateToken())
+                .token(generateUniqToken())
                 .build();
         //保存到数据库中
         var savedOrder = orderRepository.save(order);
@@ -249,5 +249,17 @@ public class OrderService {
         orderHistoryRepository.save(orderHistory);
 
         return getOrderDto(orderID);
+    }
+
+    private String generateUniqToken() {
+        String token;
+        do {
+            token = TokenUtil.generateToken();
+        } while (isTokenAlreadyExist(token));
+        return token;
+    }
+
+    private boolean isTokenAlreadyExist(String token) {
+        return orderRepository.existsByToken(token);
     }
 }
