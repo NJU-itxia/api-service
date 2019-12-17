@@ -17,21 +17,29 @@ import javax.validation.Valid;
 @RequestMapping("/order")
 public class OrderController {
 
-    @Autowired
     private OrderService orderService;
+
+    @Autowired
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @PostMapping("")
     public ResultWrapper requestNewOrder(@Valid @RequestBody RequestOrderVo requestOrderVo) {
         return ResultWrapper.wrapSuccess(orderService.addOrder(requestOrderVo));
     }
 
+    @GetMapping("/{orderID}")
+    public ResultWrapper getOrder(@PathVariable(name = "orderID") int orderID) {
+        return ResultWrapper.wrapSuccess(orderService.getOrderDto(orderID));
+    }
+
     @GetMapping("")
-    public ResultWrapper getOrder(@RequestParam(required = false) Integer id) {
-        if (id != null) {
-            //有qs，查询一个
-            return ResultWrapper.wrapSuccess(orderService.getOrderDto(id));
+    public ResultWrapper getOrder(@RequestParam(required = false) Integer page) {
+        if (page == null) {
+            page = 0;
         }
-        return ResultWrapper.wrapSuccess(orderService.getAllOrderDto());
+        return ResultWrapper.wrapSuccess(orderService.getOrderDtoByPage(page));
     }
 
     @PostMapping("/{orderID}/handle")

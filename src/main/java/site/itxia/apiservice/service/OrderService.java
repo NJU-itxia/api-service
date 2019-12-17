@@ -3,6 +3,9 @@ package site.itxia.apiservice.service;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import site.itxia.apiservice.data.entity.Order;
 import site.itxia.apiservice.data.entity.OrderHistory;
@@ -147,6 +150,21 @@ public class OrderService {
                 .history(history)
                 .token(entity.getToken())
                 .build();
+    }
+
+    /**
+     * 获取分页的预约单.
+     *
+     * @return 预约单列表.
+     */
+    public List<OrderDTO> getOrderDtoByPage(int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.Direction.DESC, "id");
+        var orderList = orderRepository.findAll(pageable);
+        var dtoList = new ArrayList<OrderDTO>();
+        for (Order entity : orderList) {
+            dtoList.add(toOrderDto(entity));
+        }
+        return dtoList;
     }
 
     /**
