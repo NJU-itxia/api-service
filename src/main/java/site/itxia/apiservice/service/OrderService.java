@@ -13,6 +13,7 @@ import site.itxia.apiservice.dto.OrderDTO;
 import site.itxia.apiservice.enumable.*;
 import site.itxia.apiservice.exception.ItxiaRuntimeException;
 import site.itxia.apiservice.util.DateUtil;
+import site.itxia.apiservice.util.TokenUtil;
 import site.itxia.apiservice.vo.HandleOrderVo;
 import site.itxia.apiservice.vo.RequestOrderVo;
 
@@ -65,6 +66,7 @@ public class OrderService {
                 .status(OrderStatus.CREATED)
                 .summary(null)
                 .time(DateUtil.getCurrentUnixTime())
+                .token(TokenUtil.generateToken())
                 .build();
         //保存到数据库中
         var savedOrder = orderRepository.save(order);
@@ -143,6 +145,7 @@ public class OrderService {
                 .handlerID(handlerID)
                 .handlerName(handlerName)
                 .history(history)
+                .token(entity.getToken())
                 .build();
     }
 

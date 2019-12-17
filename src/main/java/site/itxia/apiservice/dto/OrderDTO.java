@@ -2,6 +2,7 @@ package site.itxia.apiservice.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
@@ -60,4 +61,9 @@ public class OrderDTO {
      * 附件列表.
      */
     private List<UploadDto> attachments;
+
+    /**
+     * 预约人的access token.
+     * */
+    private String token;
 }

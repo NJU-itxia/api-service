@@ -59,4 +59,7 @@ public class Order {
     @Column(name = "`time`", nullable = false, columnDefinition = "int(32)")
     private int time;
 
+    @Column(nullable = false, columnDefinition = "text")
+    private String token;
+
 }
